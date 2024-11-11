@@ -5,7 +5,7 @@ import Sprite from './ecs/comps/sprite.js';
 import Transform2d from './ecs/comps/transform2d.js';
 import Sys from './ecs/core/sys.js';
 import GameLoop from './ecs/gameLoop.js';
-import Vector2d from './ecs/math/vector2d.js';
+import Vector2d from './ecs/util/vector2d.js';
 import InputSys from './ecs/systems/inputSys.js';
 import Polygon2dCollision from './ecs/systems/polygon2dCollision.js';
 import Polygon2dRenderer from './ecs/systems/polygon2dRenderer.js';

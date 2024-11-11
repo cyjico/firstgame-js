@@ -1,4 +1,4 @@
-import Vector2d from '../math/vector2d.js';
+import Vector2d from '../util/vector2d.js';
 
 /**
  * @param {import('../comps/polygon2d.js').Bounds2d} boundsA

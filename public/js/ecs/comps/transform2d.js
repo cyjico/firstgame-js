@@ -1,5 +1,5 @@
-import Matrix3x3 from '../math/matrix3x3.js';
-import Vector2d from '../math/vector2d.js';
+import Matrix3x3 from '../util/matrix3x3.js';
+import Vector2d from '../util/vector2d.js';
 
 export default class Transform2d {
   constructor(pos = [0, 0], rot = 0, scl = [1, 1]) {

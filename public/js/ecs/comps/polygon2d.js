@@ -1,4 +1,4 @@
-import Vector2d from '../math/vector2d.js';
+import Vector2d from '../util/vector2d.js';
 import { getPolygonBounds, isPolygonClockwse } from './polygon2d.util.js';
 
 /**

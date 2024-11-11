@@ -21,7 +21,7 @@ export const CollisionState = {
 
 /**
  * @typedef {Object} CollisionInfo
- * @prop {import('../math/vector2d.js').default | null} mtv Minimum translation vector relative to self.
+ * @prop {import('../util/vector2d.js').default | null} mtv Minimum translation vector relative to self.
  * @prop {number | null} self
  * @prop {number | null} other
  */
