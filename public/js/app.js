@@ -1,7 +1,7 @@
 'use strict';
 
 import createGame from './createGame.js';
-import debounce from './shared/debounce.js';
+import debounce from './util/debounce.js';
 
 const CANVAS = (() => {
   const canvas = document.querySelector('canvas');

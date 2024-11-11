@@ -3,7 +3,6 @@ import Polygon2dCollider from './ecs/comps/polygon2dCollider.js';
 import Polygon2dMaterial from './ecs/comps/polygon2dMaterial.js';
 import Sprite from './ecs/comps/sprite.js';
 import Transform2d from './ecs/comps/transform2d.js';
-import Sys from './ecs/core/sys.js';
 import GameLoop from './ecs/gameLoop.js';
 import Vector2d from './ecs/util/vector2d.js';
 import InputSys from './ecs/systems/inputSys.js';
@@ -11,7 +10,7 @@ import Polygon2dCollision from './ecs/systems/polygon2dCollision.js';
 import Polygon2dRenderer from './ecs/systems/polygon2dRenderer.js';
 import RendererMaster from './ecs/systems/rendererMaster.js';
 import SpriteRenderer from './ecs/systems/spriteRenderer.js';
-import loadImage from './shared/loadImage.js';
+import loadImage from './util/loadImage.js';
 
 /**
  * @param {HTMLCanvasElement}        canvas
@@ -60,7 +59,7 @@ async function createUser(gameLoop, inputSystem) {
     fillStyle: '#fff',
   });
 
-  /** @type {Sys} */
+  /** @type {import('./ecs/core/sys.js').default} */
   const system = {
     start: null,
     update: (ginfo) => {
