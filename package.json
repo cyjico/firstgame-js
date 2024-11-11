@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint . && npx tsc -p jsconfig.json",
     "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
   },
   "devDependencies": {

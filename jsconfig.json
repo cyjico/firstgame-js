@@ -6,6 +6,6 @@
     "checkJs": true,
     "strict": true,
   },
-  "include": ["public/**/*.js"],
-  "exclude": ["node_modules", "**/dist"]
+  "include": ["public/**/*"],
+  "exclude": ["node_modules"]
 }
