@@ -1,6 +1,6 @@
-import System from '../core/system.js';
+import Sys from '../core/sys.js';
 
-export default class RendererMaster extends System {
+export default class RendererMaster extends Sys {
   /**
    * @type {{
    *   start: RendererSlave[],
@@ -32,7 +32,7 @@ export default class RendererMaster extends System {
   }
 
   /**
-   * @type {import('../core/system.js').SystemAction}
+   * @type {import('../core/sys.js').SysAction}
    */
   start = (ginfo) => {
     const ctx2d = this.ctx2d.deref();
@@ -46,7 +46,7 @@ export default class RendererMaster extends System {
   };
 
   /**
-   * @type {import('../core/system.js').SystemAction}
+   * @type {import('../core/sys.js').SysAction}
    */
   update = (ginfo) => {
     const ctx2d = this.ctx2d.deref();

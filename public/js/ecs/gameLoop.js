@@ -1,7 +1,3 @@
-/**
- * @typedef {import('./core/system.js').default} System
- */
-
 import EntMger from './core/entMger.js';
 
 /**
@@ -21,7 +17,11 @@ export default class GameLoop {
   entMger = new EntMger();
 
   /**
-   * @type {{ start: System[], fixedUpdate: System[], update: System[], }}
+   * @type {{
+   *   start: import('./core/sys.js').default[],
+   *   fixedUpdate: import('./core/sys.js').default[],
+   *   update: import('./core/sys.js').default[],
+   * }}
    */
   #systems = {
     start: [],
@@ -43,14 +43,14 @@ export default class GameLoop {
   };
 
   /**
-   * @param {System[]} [systems] Array of systems. Execution is from first to last.
+   * @param {import('./core/sys.js').default[]} [systems] Array of systems. Execution is from first to last.
    */
   constructor(systems = []) {
     this.setSystems(systems);
   }
 
   /**
-   * @param {System[]} systems Array of systems. Execution is from first to last.
+   * @param {import('./core/sys.js').default[]} systems Array of systems. Execution is from first to last.
    */
   setSystems(systems) {
     this.#systems = {

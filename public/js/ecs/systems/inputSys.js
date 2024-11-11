@@ -1,11 +1,11 @@
-import System from '../core/system.js';
+import Sys from '../core/sys.js';
 
 /**
  * System for handling mouse and keyboard input.
  *
  * NOTE: SHOULD be put at the end of the system stack.
  */
-export default class InputSystem extends System {
+export default class InputSys extends Sys {
   /** @type {Object.<string, { down: boolean, held: boolean, released: boolean }> } */
   keys = {};
   mouse = {
@@ -55,7 +55,7 @@ export default class InputSystem extends System {
   }
 
   /**
-   * @type {import('../core/system.js').SystemAction} gInfo
+   * @type {import('../core/sys.js').SysAction}
    */
   update = () => {
     this.mouse.buttonsClick = 0;

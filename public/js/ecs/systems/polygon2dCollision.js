@@ -2,7 +2,7 @@ import Polygon2dCollider, {
   CollisionState,
 } from '../comps/polygon2dCollider.js';
 import Transform2d from '../comps/transform2d.js';
-import System from '../core/system.js';
+import Sys from '../core/sys.js';
 import {
   calcMinTranslationVec,
   testBoundsBounds,
@@ -26,7 +26,7 @@ function updtColState(isColliding, collider) {
   }
 }
 
-export default class Polygon2dCollision extends System {
+export default class Polygon2dCollision extends Sys {
   constructor(isResolver = false) {
     super();
 
@@ -40,7 +40,7 @@ export default class Polygon2dCollision extends System {
   }
 
   /**
-   * @type {import('../core/system.js').SystemAction}
+   * @type {import('../core/sys.js').SysAction}
    */
   fixedUpdate = (ginfo) => {
     const entMger = ginfo.entMger();

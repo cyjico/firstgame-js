@@ -3,9 +3,10 @@ import Polygon2dCollider from './ecs/comps/polygon2dCollider.js';
 import Polygon2dMaterial from './ecs/comps/polygon2dMaterial.js';
 import Sprite from './ecs/comps/sprite.js';
 import Transform2d from './ecs/comps/transform2d.js';
+import Sys from './ecs/core/sys.js';
 import GameLoop from './ecs/gameLoop.js';
 import Vector2d from './ecs/math/vector2d.js';
-import InputSystem from './ecs/systems/inputSystem.js';
+import InputSys from './ecs/systems/inputSys.js';
 import Polygon2dCollision from './ecs/systems/polygon2dCollision.js';
 import Polygon2dRenderer from './ecs/systems/polygon2dRenderer.js';
 import RendererMaster from './ecs/systems/rendererMaster.js';
@@ -17,7 +18,7 @@ import loadImage from './shared/loadImage.js';
  * @param {CanvasRenderingContext2D} ctx2d
  */
 export default async function createGame(canvas, ctx2d) {
-  const inputSystem = new InputSystem(canvas);
+  const inputSystem = new InputSys(canvas);
   const gameLoop = new GameLoop();
 
   const player = await createUser(gameLoop, inputSystem);
@@ -34,7 +35,7 @@ export default async function createGame(canvas, ctx2d) {
 
 /**
  * @param {GameLoop}    gameLoop
- * @param {InputSystem} inputSystem
+ * @param {InputSys} inputSystem
  */
 async function createUser(gameLoop, inputSystem) {
   const id = gameLoop.entMger.createEnt();
@@ -59,11 +60,11 @@ async function createUser(gameLoop, inputSystem) {
     fillStyle: '#fff',
   });
 
-  /** @type {import('./ecs/gameLoop.js').System} */
+  /** @type {Sys} */
   const system = {
     start: null,
-    update: (gInfo) => {
-      const fixedDtSec = gInfo.time.fixedDt * 0.001;
+    update: (ginfo) => {
+      const fixedDtSec = ginfo.time.fixedDt * 0.001;
 
       if (inputSystem.isKeyPressed('w', false))
         t2d.pos.add(Vector2d.fromRadians(t2d.rot).mul(fixedDtSec).mul(250));
@@ -77,10 +78,10 @@ async function createUser(gameLoop, inputSystem) {
       if (inputSystem.isKeyPressed('d', false)) t2d.rot += fixedDtSec * 4;
 
       if (inputSystem.mouse.getButtonClicked('prim'))
-        gInfo
+        ginfo
           .entMger()
           .addComps(
-            gInfo.entMger().createEnt(),
+            ginfo.entMger().createEnt(),
             Polygon2dCollider.fromRect(50, 50),
             new Transform2d([inputSystem.mouse.x, inputSystem.mouse.y]),
             __poly2dRect,
