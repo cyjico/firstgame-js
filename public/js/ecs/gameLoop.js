@@ -21,7 +21,7 @@ export default class GameLoop {
   entMger = new EntMger();
 
   /**
-   * @type {{ start: System[]; fixedUpdate: System[]; update: System[]; }}
+   * @type {{ start: System[], fixedUpdate: System[], update: System[], }}
    */
   #systems = {
     start: [],
@@ -43,9 +43,22 @@ export default class GameLoop {
   };
 
   /**
+   * @param {System[]} [systems] Array of systems. Execution is from first to last.
+   */
+  constructor(systems = []) {
+    this.setSystems(systems);
+  }
+
+  /**
    * @param {System[]} systems Array of systems. Execution is from first to last.
    */
-  constructor(systems) {
+  setSystems(systems) {
+    this.#systems = {
+      start: [],
+      update: [],
+      fixedUpdate: [],
+    };
+
     for (let i = 0; i < systems.length; i++) {
       const sys = systems[i];
 
@@ -53,38 +66,6 @@ export default class GameLoop {
       if (sys.update) this.#systems.update.push(sys);
       if (sys.fixedUpdate) this.#systems.fixedUpdate.push(sys);
     }
-  }
-
-  get systems() {
-    return {
-      /**
-       * @template {Function} T
-       * @param {T} sys
-       */
-      calcExists: (sys) => {
-        for (let i = 0; i < this.#systems.start.length; i++)
-          if (this.#systems.start[i] instanceof sys) return true;
-        for (let i = 0; i < this.#systems.update.length; i++)
-          if (this.#systems.update[i] instanceof sys) return true;
-        for (let i = 0; i < this.#systems.fixedUpdate.length; i++)
-          if (this.#systems.fixedUpdate[i] instanceof sys) return true;
-
-        return false;
-      },
-      /**
-       * @param {System} sys
-       */
-      push: (sys) => {
-        if (this.info.time.dt !== 0)
-          throw new Error(
-            'Modification of systems during runtime is not allowed.',
-          );
-
-        if (sys.start) this.#systems.start.push(sys);
-        if (sys.update) this.#systems.update.push(sys);
-        if (sys.fixedUpdate) this.#systems.fixedUpdate.push(sys);
-      },
-    };
   }
 
   start = () => {
