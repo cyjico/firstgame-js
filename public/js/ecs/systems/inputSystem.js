@@ -1,7 +1,9 @@
 import System from '../core/system.js';
 
 /**
- * Classified as a system but it only abstracts the event listeners.
+ * System for handling mouse and keyboard input.
+ *
+ * NOTE: SHOULD be put at the end of the system stack.
  */
 export default class InputSystem extends System {
   /** @type {Object.<string, { down: boolean, held: boolean, released: boolean }> } */
