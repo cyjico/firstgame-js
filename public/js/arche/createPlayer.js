@@ -12,10 +12,11 @@ const POLY2DCOL_RECT = Polygon2dCollider.fromRect(50, 50);
 /**
  * @param {import('../ecs/core/entMger.js').default} entMger
  * @param {import('../ecs/systems/inputSys.js').default} inputSys
+ * @param {[number, number]} pos
  */
-export default function createPlayer(entMger, inputSys) {
+export default function createPlayer(entMger, inputSys, pos) {
   const id = entMger.createEnt();
-  const t2d = new Transform2d([50, 50]);
+  const t2d = new Transform2d(pos, -Math.PI / 2);
   let sprite = new Sprite({
     width: 50,
     height: 50,

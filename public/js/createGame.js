@@ -16,7 +16,10 @@ export default async function createGame(canvas, ctx2d) {
   const inputSys = new InputSys(canvas);
 
   gameLoop.setSystems([
-    createPlayer(gameLoop.entMger, inputSys).sys,
+    createPlayer(gameLoop.entMger, inputSys, [
+      canvas.width / 2,
+      canvas.height / 2,
+    ]).sys,
     new BulletSys(canvas),
     new Polygon2dCollision(true),
     new RendererMaster(ctx2d, new Polygon2dRenderer(), new SpriteRenderer()),
