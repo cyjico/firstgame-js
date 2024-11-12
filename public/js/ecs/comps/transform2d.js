@@ -3,18 +3,20 @@ import Matrix3x3 from '../util/matrix3x3.js';
 import Vector2d from '../util/vector2d.js';
 
 export default class Transform2d {
+  /**
+   * Rotation in radians.
+   *
+   * @protected
+   * @type {number}
+   */
+  _rot = 0;
+
   constructor(pos = [0, 0], rot = 0, scl = [1, 1]) {
     /**
      * @type {Vector2d}
      */
     this.pos = new Vector2d(pos[0], pos[1]);
-    /**
-     * Rotation in radians.
-     *
-     * @protected
-     * @type {number}
-     */
-    this._rot = rot;
+    this.rot = rot;
     /**
      * @type {Vector2d}
      */
