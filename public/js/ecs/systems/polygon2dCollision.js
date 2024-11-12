@@ -94,7 +94,10 @@ export default class Polygon2dCollision extends Sys {
         if (!fcache.col.has(ent1)) fcache.col.set(ent1, new Set());
         fcache.col.get(ent1)?.add(ent2);
 
-        if (c1.rules.mask & c2.rules.layer && c2.rules.mask & c1.rules.layer)
+        if (
+          (c1.rules.mask & c2.rules.layer) === 0 &&
+          (c2.rules.mask & c1.rules.layer) === 0
+        )
           continue;
 
         if (!testBoundsBounds(c1.calcAabb(t1), c2.calcAabb(t2))) continue;
