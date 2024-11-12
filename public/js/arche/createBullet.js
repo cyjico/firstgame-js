@@ -49,8 +49,8 @@ export class BulletSys extends Sys {
 }
 
 const POLY2DCOL_RECT = Polygon2dCollider.fromRect(40, 25);
-POLY2DCOL_RECT.rules.tag = 'bullet';
-POLY2DCOL_RECT.rules.tagCollidesWith.add('bullet');
+POLY2DCOL_RECT.rules.mask = 0b100;
+POLY2DCOL_RECT.rules.layer = 0b101;
 
 /**
  * @param {import("../ecs/core/entMger.js").default} entMger

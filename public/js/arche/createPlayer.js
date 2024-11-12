@@ -8,7 +8,8 @@ import loadImage from '../util/loadImage.js';
 import createBullet from './createBullet.js';
 
 const POLY2DCOL_RECT = Polygon2dCollider.fromRect(50, 50);
-POLY2DCOL_RECT.rules.tag = 'player';
+POLY2DCOL_RECT.rules.layer = 0b010;
+POLY2DCOL_RECT.rules.mask = 0b011;
 
 /**
  * @param {import('../ecs/core/entMger.js').default} entMger

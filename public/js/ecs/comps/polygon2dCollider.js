@@ -43,19 +43,19 @@ export default class Polygon2dCollider extends Polygon2d {
    * @param {import('./polygon2d.js').Edge[]} [preprocessed.edges] Edges of the vertices.
    * @param {import('./polygon2d.js').Bounds2d} [preprocessed.oobb] Object-oriented bounds of the vertices.
    * @param {Object} [rules] Collision rules.
-   * @param {string} [rules.tag] Tag of the collider.
-   * @param {string[]} [rules.tagCollidesWith] What it collides with.
+   * @param {number} [rules.layer] Collision layer. It defaults to 1.
+   * @param {number} [rules.mask] Collision mask. It defaults to 1.
    */
   constructor(
     verts,
     { edges = undefined, oobb = undefined } = {},
-    { tag = 'default', tagCollidesWith = ['default'] } = {},
+    { layer = 0b1, mask = 0b1 } = {},
   ) {
     super(verts, { edges, oobb });
 
     this.rules = {
-      tag,
-      tagCollidesWith: new Set(tagCollidesWith),
+      layer,
+      mask,
     };
   }
 
