@@ -37,7 +37,7 @@ export default class SpriteRenderer extends RendererSlave {
         tmat.m12,
       );
       
-      const sprmat = spr.getLocalToWorldMatrix();
+      const sprmat = spr.getTransformationMatrix();
       ctx2d.transform(
         sprmat.m00,
         sprmat.m10,

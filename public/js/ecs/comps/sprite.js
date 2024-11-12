@@ -36,7 +36,7 @@ export default class Sprite {
     this.rot = rot;
   }
 
-  getLocalToWorldMatrix() {
+  getTransformationMatrix() {
     return Matrix3x3.createTRS(this.pos, this.rot, Vector2d.one);
   }
 }
