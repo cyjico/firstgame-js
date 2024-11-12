@@ -95,18 +95,18 @@ export default class Polygon2dCollision extends Sys {
         fcache.col.get(ent1)?.add(ent2);
 
         if (
-          !c1.collidesWith.has(c2.tag) &&
-          !c2.collidesWith.has(c1.tag)
+          !c1.rules.tagCollidesWith.has(c2.rules.tag) &&
+          !c2.rules.tagCollidesWith.has(c1.rules.tag)
         ) {
           continue;
         }
 
-        const tp1 = c1.calcTransformed(t1);
-        const tp2 = c2.calcTransformed(t2);
+        if (!testBoundsBounds(c1.calcAabb(t1), c2.calcAabb(t2))) continue;
+        
+        const tc1 = c1.calcTransformed(t1);
+        const tc2 = c2.calcTransformed(t2);
 
-        if (!testBoundsBounds(tp1.aabb, tp2.aabb)) continue;
-
-        const mtv = calcMinTranslationVec(tp1, tp2);
+        const mtv = calcMinTranslationVec(tc1, tc2);
         if (mtv) {
           updtColState(true, c1);
 

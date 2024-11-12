@@ -39,11 +39,24 @@ export default class Polygon2dCollider extends Polygon2d {
 
   /**
    * @param {import("./polygon2d.js").Vertex[]} verts
+   * @param {Object} [preprocessed] Skips procssing and assigns the properties directly.
+   * @param {import('./polygon2d.js').Edge[]} [preprocessed.edges] Edges of the vertices.
+   * @param {import('./polygon2d.js').Bounds2d} [preprocessed.oobb] Object-oriented bounds of the vertices.
+   * @param {Object} [rules] Collision rules.
+   * @param {string} [rules.tag] Tag of the collider.
+   * @param {string[]} [rules.tagCollidesWith] What it collides with.
    */
-  constructor(verts, tag='default', tagCollidesWith=['default']) {
-    super(verts);
-    this.tag = tag;
-    this.collidesWith = new Set(tagCollidesWith);
+  constructor(
+    verts,
+    { edges = undefined, oobb = undefined } = {},
+    { tag = 'default', tagCollidesWith = ['default'] } = {},
+  ) {
+    super(verts, { edges, oobb });
+
+    this.rules = {
+      tag,
+      tagCollidesWith: new Set(tagCollidesWith),
+    };
   }
 
   /**
@@ -51,9 +64,11 @@ export default class Polygon2dCollider extends Polygon2d {
    * @param {boolean} [forceClockwise=true]
    */
   static fromArray(verts, forceClockwise = true) {
-    return new Polygon2dCollider(
-      Polygon2d.fromArray(verts, forceClockwise).verts,
-    );
+    const x = Polygon2d.fromArray(verts, forceClockwise);
+    return new Polygon2dCollider(x.verts, {
+      edges: x.edges,
+      oobb: x.oobb,
+    });
   }
 
   /**
@@ -63,6 +78,10 @@ export default class Polygon2dCollider extends Polygon2d {
    * @param {number} height
    */
   static fromRect(width, height) {
-    return new Polygon2dCollider(Polygon2d.fromRect(width, height).verts);
+    const x = Polygon2d.fromRect(width, height);
+    return new Polygon2dCollider(x.verts, {
+      edges: x.edges,
+      oobb: x.oobb,
+    });
   }
 }

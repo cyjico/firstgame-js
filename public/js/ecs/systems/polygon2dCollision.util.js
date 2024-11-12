@@ -76,7 +76,7 @@ export function calcMinTranslationVec(poly1, poly2) {
   const edges = [poly1.edges, poly2.edges];
   for (let i = 0; i < edges.length; i++) {
     for (let j = 0; j < edges[i].length; j++) {
-      const axis = edges[i].get(j).calcNormal();
+      const axis = edges[i][j].calcNormal();
 
       const proj1 = projectVerts(poly1.verts, axis);
       const proj2 = projectVerts(poly2.verts, axis);

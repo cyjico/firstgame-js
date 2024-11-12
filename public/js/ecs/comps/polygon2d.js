@@ -1,39 +1,79 @@
 import Vector2d from '../util/vector2d.js';
-import { getPolygonBounds, isPolygonClockwse } from './polygon2d.util.js';
+import { isClockwise } from './polygon2d.util.js';
 
 /**
- * Represents a simple (clockwise) polygon whose vertices are in local/model space.
+ * Represents a convex clockwise polygon.
  */
 export default class Polygon2d {
   /**
+   * Vertices in local space.
+   *
    * @protected
    * @type {Vertex[]}
    */
   _verts = [];
 
   /**
-   * Also known as the "untransformed" minimum bounding box (OOBB).
+   * Edges in local space.
+   *
+   * @protected
+   * @type {Edge[]}
+   */
+  _edges = [];
+
+  /**
+   * Object-oriented bounds in local space.
    *
    * @protected
    * @type {Bounds2d}
    */
-  _localOobb = {
+  _oobb = {
     max: Vector2d.zero,
     min: Vector2d.zero,
   };
 
   /**
    * @param {Vertex[]} verts
+   * @param {Object} [preprocessed] Skips procssing and assigns the properties directly.
+   * @param {Edge[]} [preprocessed.edges] Edges of the vertices.
+   * @param {Bounds2d} [preprocessed.oobb] Object-oriented bounds of the vertices.
    * @throws `verts` must be greater or equal to 3.
    */
-  constructor(verts) {
+  constructor(verts, { edges = undefined, oobb = undefined } = {}) {
     if (verts.length < 3)
       throw new RangeError('Polygon cannot have less than 3 vertices.');
 
     if (!verts[0].vnext || !verts[0].vprev) throw new TypeError('Not a vertex');
 
     this._verts = verts;
-    this._localOobb = getPolygonBounds(this._verts);
+    if (edges) this._edges = edges;
+    if (oobb) this._oobb = oobb;
+
+    if (!edges || !oobb) {
+      const min = Vector2d.positiveInfinity;
+      const max = Vector2d.negativeInfinity;
+
+      for (let i = 0; i < this._verts.length; i++) {
+        if (!edges) {
+          this._edges.push({
+            start: this._verts[i],
+            end: this._verts[i].vnext,
+            calcNormal() {
+              const dir = this.end.clone().sub(this.start).normalized();
+
+              return new Vector2d(-dir.y, dir.x);
+            },
+          });
+        }
+
+        if (!oobb) {
+          if (this._verts[i].x < min.x) min.x = this._verts[i].x;
+          if (this._verts[i].x > max.x) max.x = this._verts[i].x;
+          if (this._verts[i].y < min.y) min.y = this._verts[i].y;
+          if (this._verts[i].y > max.y) max.y = this._verts[i].y;
+        }
+      }
+    }
   }
 
   /**
@@ -43,57 +83,27 @@ export default class Polygon2d {
     return this._verts;
   }
 
-  /**
-   * @returns {EdgeList}
-   */
-  edges() {
-    const that = this;
-
-    return {
-      *[Symbol.iterator]() {
-        for (let i = 0; i < that.verts.length; i++) yield this.get(i);
-      },
-      /**
-       * Get edge at the specified index.
-       *
-       * @param {number} index
-       * @returns {Readonly<Edge>}
-       */
-      get: (index) => {
-        return {
-          start: this._verts[index],
-          end: this._verts[index].vnext,
-          calcNormal: () => {
-            const dir = this._verts[index].vnext
-              .clone()
-              .sub(this._verts[index])
-              .normalized();
-            return new Vector2d(-dir.y, dir.x);
-          },
-        };
-      },
-      /** @type {Readonly<number>} */
-      length: this.verts.length,
-    };
+  get edges() {
+    return this._edges;
   }
 
   /**
    * @type {Readonly<Bounds2d>}
    */
-  get localOobb() {
-    return this._localOobb;
+  get oobb() {
+    return this._oobb;
   }
 
   /**
    * @param {import('./transform2d.js').default} t
    * @returns {import('./polygon2d.js').Bounds2d} Transformed object-aligned bounding box.
    */
-  calcGlobalOobb(t) {
+  calcWorldOobb(t) {
     const mat = t.getLocalToWorldMatrix();
 
     return {
-      min: mat.multiplyVector2(this._localOobb.min),
-      max: mat.multiplyVector2(this._localOobb.max),
+      min: mat.multiplyVector2(this._oobb.min),
+      max: mat.multiplyVector2(this._oobb.max),
     };
   }
 
@@ -107,10 +117,10 @@ export default class Polygon2d {
     const max = Vector2d.negativeInfinity;
 
     for (let i = 0; i < 2; i++) {
-      const px = this.localOobb[i === 0 ? 'max' : 'min'].x;
+      const px = this.oobb[i === 0 ? 'max' : 'min'].x;
 
       for (let j = 0; j < 2; j++) {
-        const py = this.localOobb[j === 0 ? 'max' : 'min'].y;
+        const py = this.oobb[j === 0 ? 'max' : 'min'].y;
 
         const p = mat.multiplyVector2(new Vector2d(px, py));
         if (p.x < min.x) min.x = p.x;
@@ -152,12 +162,13 @@ export default class Polygon2d {
     nverts[nverts.length - 1].vnext = nverts[0];
     nverts[0].vprev = nverts[nverts.length - 1];
 
-    const poly = new Polygon2d(nverts);
+    const npoly = new Polygon2d(nverts);
+
     return {
-      verts: poly._verts,
-      edges: poly.edges(),
-      aabb: poly._localOobb,
-      calcOobb: () => this.calcGlobalOobb(t),
+      verts: npoly.verts,
+      edges: npoly.edges,
+      aabb: npoly.oobb,
+      calcOobb: () => this.calcWorldOobb(t),
     };
   }
 
@@ -169,7 +180,7 @@ export default class Polygon2d {
     if (verts.length < 3)
       throw new RangeError('Polygon cannot have less than 3 vertices.');
 
-    if (forceClockwise && !isPolygonClockwse(verts)) verts.reverse();
+    if (forceClockwise && !isClockwise(verts)) verts.reverse();
 
     /** @type {Vertex[]} */
     const nverts = [];
@@ -232,16 +243,8 @@ export default class Polygon2d {
 
 /**
  * @typedef {{
- *   [Symbol.iterator](): Generator<Readonly<Edge>, void, unknown>;
- *   get: (index: number) => Readonly<Edge>;
- *   length: Readonly<number>;
- * }} EdgeList
- */
-
-/**
- * @typedef {{
  *   verts: Vertex[],
- *   edges: EdgeList,
+ *   edges: Edge[],
  *   aabb: Bounds2d,
  *   calcOobb: () => Bounds2d
  * }} TransformedPolygon2d
