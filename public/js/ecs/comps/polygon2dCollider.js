@@ -5,7 +5,7 @@ export const CollisionState = {
   ENTER: 2,
   COLLIDING: 4,
   EXIT: 8,
-  WCOLLIDING: 2 | 4 | 8,
+  WIDE_COLLIDING: 2 | 4 | 8,
   /** @param {number} num  */
   toString(num) {
     const val = [];

@@ -109,14 +109,19 @@ export default class Polygon2dCollision extends Sys {
         if (mtv) {
           updtColState(true, c1);
 
-          if (!fcache.rst.has(ent1)) {
-            fcache.rst.add(ent1);
-            c1.prevColState = c1.curColState;
+          if (!fcache.rst.has(ent2)) {
+            fcache.rst.add(ent2);
+            c2.prevColState = c2.curColState;
             updtColState(true, c2);
           }
 
           c1.curColInfo.mtv = mtv;
+          c1.curColInfo.self = ent1;
+          c1.curColInfo.other = ent2;
+
           c2.curColInfo.mtv = mtv.negate();
+          c2.curColInfo.self = ent2;
+          c2.curColInfo.other = ent1;
 
           if (this.isResolver) {
             const mtvHalf = mtv.clone().mul(0.5);
