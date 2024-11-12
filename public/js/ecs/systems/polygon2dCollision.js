@@ -119,7 +119,7 @@ export default class Polygon2dCollision extends Sys {
           c2.curColInfo.mtv = mtv.negate();
 
           if (this.isResolver) {
-            const mtvHalf = mtv.clone().div(2);
+            const mtvHalf = mtv.clone().mul(0.5);
             t1.pos.add(mtvHalf);
             t2.pos.sub(mtvHalf);
           }
