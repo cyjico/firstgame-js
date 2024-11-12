@@ -1,5 +1,7 @@
 import { CollisionLayer } from '../constants.js';
-import Polygon2dCollider from '../ecs/comps/polygon2dCollider.js';
+import Polygon2dCollider, {
+  CollisionState,
+} from '../ecs/comps/polygon2dCollider.js';
 import Sprite from '../ecs/comps/sprite.js';
 import Transform2d from '../ecs/comps/transform2d.js';
 import Sys from '../ecs/core/sys.js';
@@ -28,12 +30,25 @@ export class BulletSys extends Sys {
 
   /** @type {import('../ecs/core/sys.js').SysAction} */
   fixedUpdate = (ginfo) => {
-    const ents = ginfo.entMger().getEntsWithComp_t(BulletComp);
+    const entMger = ginfo.entMger();
+    const ents = entMger.getEntsWithComp_t(BulletComp);
 
     for (const ent of ents) {
-      const bcomp = ginfo.entMger().getComp_t(ent, BulletComp);
-      const t2d = ginfo.entMger().getComp_t(ent, Transform2d);
-      if (!bcomp || !t2d) return;
+      const bcomp = entMger.getComp_t(ent, BulletComp);
+      const t2d = entMger.getComp_t(ent, Transform2d);
+      const col2d = entMger.getComp_t(ent, Polygon2dCollider);
+      if (!bcomp || !t2d || !col2d) return;
+
+      if (
+        (col2d.curColState & CollisionState.WIDE_COLLIDING) &&
+        col2d.curColInfo.other
+      ) {
+        if (entMger.getComp_t(col2d.curColInfo.other, Transform2d)) {
+          entMger.destroyEnt(col2d.curColInfo.other);
+          entMger.destroyEnt(ent);
+          return;
+        }
+      }
 
       t2d.pos.add(bcomp.vec.clone().mul(ginfo.time.fixedDt * 0.001)).clone();
       t2d.rot = bcomp.rot;
@@ -44,7 +59,7 @@ export class BulletSys extends Sys {
         t2d.pos.y < -50 ||
         t2d.pos.y > this.canvas.height + 50
       )
-        ginfo.entMger().destroyEnt(ent);
+        entMger.destroyEnt(ent);
     }
   };
 }
