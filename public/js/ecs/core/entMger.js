@@ -3,14 +3,14 @@
  */
 export default class EntMger {
   /**
-   * `ent_id => comps => comp_instance`
+   * `ent_id => comp_name used by ent_id => comp_instance whose name is comp_name`
    *
    * @type {Map<number, Map<string, InstanceType<any>>>}
    */
   #ent_CompsMap = new Map();
 
   /**
-   * `comp => ent_id`
+   * `comp => bunch of ent_id that use the comp`
    *
    * @type {Map<string, Set<number>>}
    */
@@ -62,11 +62,10 @@ export default class EntMger {
     // Get component name.
     let componentName = '';
 
-    if (component.constructor.name === 'Object') {
+    if (component.constructor.name === 'Object')
       throw new TypeError(
         `Adding a component with constructor "Object" is not allowed. (ent:${entityId}).`,
       );
-    }
 
     componentName = component.constructor.name;
 
@@ -93,9 +92,8 @@ export default class EntMger {
    * @param {...object} components
    */
   addComps(entityId, ...components) {
-    for (let i = 0; i < components.length; i++) {
+    for (let i = 0; i < components.length; i++)
       this.addComp(entityId, components[i]);
-    }
 
     return this;
   }
