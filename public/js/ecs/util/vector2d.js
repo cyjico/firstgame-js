@@ -204,17 +204,19 @@ export default class Vector2d {
   }
 
   /**
-   * @param {number} rad 
-   * @returns 
+   * @param {number} rad
+   * @returns {Vector2d} Vector converted from an angle in radians.
    */
   static fromRadians(rad) {
     return new Vector2d(Math.cos(rad), Math.sin(rad));
   }
 
   /**
+   * Angle between two vectors.
+   *
    * @param {Vector2d} from
    * @param {Vector2d} to
-   * @returns {number}
+   * @returns {number} Angle in radians.
    */
   static angle(from, to) {
     const denominator = Math.sqrt(
@@ -223,7 +225,7 @@ export default class Vector2d {
     if (denominator < 1e-15) return 0;
 
     const dot = clamp(Vector2d.dot(from, to) / denominator, -1, 1);
-    return Math.acos(dot) * RAD_TO_DEG;
+    return Math.acos(dot);
   }
 
   /**
