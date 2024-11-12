@@ -50,8 +50,13 @@ export default class Polygon2d {
     if (oobb) this._oobb = oobb;
 
     if (!edges || !oobb) {
-      const min = Vector2d.positiveInfinity;
-      const max = Vector2d.negativeInfinity;
+      if (!edges) this._edges = [];
+
+      if (!oobb)
+        this._oobb = {
+          min: Vector2d.positiveInfinity,
+          max: Vector2d.negativeInfinity,
+        };
 
       for (let i = 0; i < this._verts.length; i++) {
         if (!edges) {
@@ -67,18 +72,22 @@ export default class Polygon2d {
         }
 
         if (!oobb) {
-          if (this._verts[i].x < min.x) min.x = this._verts[i].x;
-          if (this._verts[i].x > max.x) max.x = this._verts[i].x;
-          if (this._verts[i].y < min.y) min.y = this._verts[i].y;
-          if (this._verts[i].y > max.y) max.y = this._verts[i].y;
+          if (this._verts[i].x < this._oobb.min.x)
+            this._oobb.min.x = this._verts[i].x;
+
+          if (this._verts[i].x > this._oobb.max.x)
+            this._oobb.max.x = this._verts[i].x;
+
+          if (this._verts[i].y < this._oobb.min.y)
+            this._oobb.min.y = this._verts[i].y;
+
+          if (this._verts[i].y > this._oobb.max.y)
+            this._oobb.max.y = this._verts[i].y;
         }
       }
     }
   }
 
-  /**
-   * @type {Vertex[]}
-   */
   get verts() {
     return this._verts;
   }
@@ -87,9 +96,6 @@ export default class Polygon2d {
     return this._edges;
   }
 
-  /**
-   * @type {Readonly<Bounds2d>}
-   */
   get oobb() {
     return this._oobb;
   }
@@ -123,6 +129,7 @@ export default class Polygon2d {
         const py = this.oobb[j === 0 ? 'max' : 'min'].y;
 
         const p = mat.multiplyVector2(new Vector2d(px, py));
+
         if (p.x < min.x) min.x = p.x;
         if (p.x > max.x) max.x = p.x;
         if (p.y < min.y) min.y = p.y;
@@ -226,8 +233,8 @@ export default class Polygon2d {
 
 /**
  * @typedef {Object} Bounds2d Bounding box, bounds for short.
- * @prop {Readonly<Vector2d>} max For axis-aligned bounding boxes, it is usually the bottom-right point.
- * @prop {Readonly<Vector2d>} min For axis-aligned bounding boxes, it is usually the top-left point.
+ * @prop {Vector2d} max For axis-aligned bounding boxes, it is usually the bottom-right point.
+ * @prop {Vector2d} min For axis-aligned bounding boxes, it is usually the top-left point.
  */
 
 /**
