@@ -1,3 +1,4 @@
+import { CollisionLayer } from '../constants.js';
 import Polygon2dCollider from '../ecs/comps/polygon2dCollider.js';
 import Sprite from '../ecs/comps/sprite.js';
 import Transform2d from '../ecs/comps/transform2d.js';
@@ -49,18 +50,30 @@ export class BulletSys extends Sys {
 }
 
 const POLY2DCOL_RECT = Polygon2dCollider.fromRect(40, 25);
-POLY2DCOL_RECT.rules.layer = 0b100;
-POLY2DCOL_RECT.rules.mask = 0b101;
 
 /**
  * @param {import("../ecs/core/entMger.js").default} entMger
+ * @param {'PLAYER'|'ENEMY'} owner
  * @param {import("../ecs/util/vector2d.js").default} dir
  * @param {number} spd
  * @param {import("../ecs/util/vector2d.js").default} pos
  * @param {number} rot
  */
-export default function createBullet(entMger, dir, spd, pos, rot) {
+export default function createBullet(entMger, owner, dir, spd, pos, rot) {
   const id = entMger.createEnt();
+  const poly2dcol = new Polygon2dCollider(
+    POLY2DCOL_RECT.verts,
+    {
+      edges: POLY2DCOL_RECT.edges,
+      oobb: POLY2DCOL_RECT.oobb,
+    },
+    {
+      layer: owner === 'PLAYER' ? CollisionLayer.PLAYER : CollisionLayer.ENEMY,
+      mask:
+        CollisionLayer.DEFAULT |
+        (owner === 'PLAYER' ? CollisionLayer.ENEMY : CollisionLayer.PLAYER),
+    },
+  );
   const t2d = new Transform2d([pos.x, pos.y]);
   let sprite = new Sprite({
     rot: 0,
@@ -74,6 +87,6 @@ export default function createBullet(entMger, dir, spd, pos, rot) {
   ).then((img) => {
     sprite.image = img;
 
-    entMger.addComps(id, POLY2DCOL_RECT, t2d, sprite, bcomp);
+    entMger.addComps(id, poly2dcol, t2d, sprite, bcomp);
   });
 }
