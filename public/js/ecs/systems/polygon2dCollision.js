@@ -98,7 +98,7 @@ export default class Polygon2dCollision extends Sys {
         if (!fcache.col.has(ent1)) fcache.col.set(ent1, new Set());
         fcache.col.get(ent1)?.add(ent2);
 
-        if (!testBoundsBounds(tp1.oobbUntransformed, tp2.oobbUntransformed))
+        if (!testBoundsBounds(tp1.aabb, tp2.aabb))
           continue;
 
         const mtv = calcMinTranslationVec(tp1, tp2);

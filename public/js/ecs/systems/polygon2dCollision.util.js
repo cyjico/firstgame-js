@@ -64,8 +64,8 @@ export function testLineLine(startA, endA, startB, endB) {
  * Calculate the minimum translation vector by finding the separating axis with the smallest
  * overlap between the two polygons.
  *
- * @param {import('../comps/polygon2d.js').default} poly1
- * @param {import('../comps/polygon2d.js').default} poly2
+ * @param {import('../comps/polygon2d.js').TransformedPolygon2d} poly1
+ * @param {import('../comps/polygon2d.js').TransformedPolygon2d} poly2
  * @returns {Vector2d | null}
  */
 export function calcMinTranslationVec(poly1, poly2) {
@@ -73,7 +73,7 @@ export function calcMinTranslationVec(poly1, poly2) {
   let smallestAxis = Vector2d.positiveInfinity;
 
   // Find the smallest overlap and its corresponding axis.
-  const edges = [poly1.edges(), poly2.edges()];
+  const edges = [poly1.edges, poly2.edges];
   for (let i = 0; i < edges.length; i++) {
     for (let j = 0; j < edges[i].length; j++) {
       const axis = edges[i].get(j).calcNormal();
@@ -97,8 +97,10 @@ export function calcMinTranslationVec(poly1, poly2) {
   const mtv = smallestAxis.clone().mul(smallestOverlap);
 
   // Make sure the minimum translation vector points to `poly2`.
-  const poly1ToPoly2 = poly2.calcCentre().sub(poly1.calcCentre());
-  return Vector2d.dot(mtv, poly1ToPoly2) < 0 ? mtv.negate() : mtv;
+  const p2c = poly2.aabb.max.clone().add(poly2.aabb.min).div(2);
+  const p1c = poly1.aabb.max.clone().add(poly1.aabb.min).div(2);
+  const dir = p2c.sub(p1c);
+  return Vector2d.dot(mtv, dir) < 0 ? mtv.negate() : mtv;
 }
 
 /**

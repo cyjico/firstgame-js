@@ -2,12 +2,12 @@ import Vector2d from '../util/vector2d.js';
 import { getPolygonBounds, isPolygonClockwse } from './polygon2d.util.js';
 
 /**
- * Represents a simple (clockwise) polygon.
+ * Represents a simple (clockwise) polygon whose vertices are in local/model space.
  */
 export default class Polygon2d {
   /**
    * @protected
-   * @type {readonly Vertex[]}
+   * @type {Vertex[]}
    */
   _verts = [];
 
@@ -17,13 +17,13 @@ export default class Polygon2d {
    * @protected
    * @type {Bounds2d}
    */
-  _oobbUntransformed = {
+  _localOobb = {
     max: Vector2d.zero,
     min: Vector2d.zero,
   };
 
   /**
-   * @param {readonly Vertex[]} verts
+   * @param {Vertex[]} verts
    * @throws `verts` must be greater or equal to 3.
    */
   constructor(verts) {
@@ -33,17 +33,19 @@ export default class Polygon2d {
     if (!verts[0].vnext || !verts[0].vprev) throw new TypeError('Not a vertex');
 
     this._verts = verts;
-
-    this._oobbUntransformed = getPolygonBounds(this._verts);
+    this._localOobb = getPolygonBounds(this._verts);
   }
 
   /**
-   * @type {readonly Vertex[]}
+   * @type {Vertex[]}
    */
   get verts() {
     return this._verts;
   }
 
+  /**
+   * @returns {EdgeList}
+   */
   edges() {
     const that = this;
 
@@ -78,31 +80,21 @@ export default class Polygon2d {
   /**
    * @type {Readonly<Bounds2d>}
    */
-  get oobbUntransformed() {
-    return this._oobbUntransformed;
+  get localOobb() {
+    return this._localOobb;
   }
 
   /**
    * @param {import('./transform2d.js').default} t
    * @returns {import('./polygon2d.js').Bounds2d} Transformed object-aligned bounding box.
    */
-  calcOobbTransformed(t) {
+  calcGlobalOobb(t) {
     const mat = t.getLocalToWorldMatrix();
 
     return {
-      min: mat.multiplyVector2(this.oobbUntransformed.min),
-      max: mat.multiplyVector2(this.oobbUntransformed.max),
+      min: mat.multiplyVector2(this._localOobb.min),
+      max: mat.multiplyVector2(this._localOobb.max),
     };
-  }
-
-  /**
-   * Calculates the centre of the Polygon2d based on its object-oriented bounds.
-   */
-  calcCentre() {
-    return this._oobbUntransformed.max
-      .clone()
-      .add(this._oobbUntransformed.min)
-      .div(2);
   }
 
   /**
@@ -115,10 +107,10 @@ export default class Polygon2d {
     const max = Vector2d.negativeInfinity;
 
     for (let i = 0; i < 2; i++) {
-      const px = this.oobbUntransformed[i === 0 ? 'max' : 'min'].x;
+      const px = this.localOobb[i === 0 ? 'max' : 'min'].x;
 
       for (let j = 0; j < 2; j++) {
-        const py = this.oobbUntransformed[j === 0 ? 'max' : 'min'].y;
+        const py = this.localOobb[j === 0 ? 'max' : 'min'].y;
 
         const p = mat.multiplyVector2(new Vector2d(px, py));
         if (p.x < min.x) min.x = p.x;
@@ -133,7 +125,7 @@ export default class Polygon2d {
 
   /**
    * @param {import('./transform2d.js').default} t
-   * @returns {Polygon2d}
+   * @returns {TransformedPolygon2d}
    */
   calcTransformed(t) {
     const m = t.getLocalToWorldMatrix();
@@ -160,7 +152,13 @@ export default class Polygon2d {
     nverts[nverts.length - 1].vnext = nverts[0];
     nverts[0].vprev = nverts[nverts.length - 1];
 
-    return new Polygon2d(nverts);
+    const poly = new Polygon2d(nverts);
+    return {
+      verts: poly._verts,
+      edges: poly.edges(),
+      aabb: poly._localOobb,
+      calcOobb: () => this.calcGlobalOobb(t),
+    };
   }
 
   /**
@@ -216,6 +214,12 @@ export default class Polygon2d {
 }
 
 /**
+ * @typedef {Object} Bounds2d Bounding box, bounds for short.
+ * @prop {Readonly<Vector2d>} max For axis-aligned bounding boxes, it is usually the bottom-right point.
+ * @prop {Readonly<Vector2d>} min For axis-aligned bounding boxes, it is usually the top-left point.
+ */
+
+/**
  * @typedef {Vector2d & { vprev: Vertex, vnext: Vertex }} Vertex Vertex in a polygon.
  */
 
@@ -227,7 +231,18 @@ export default class Polygon2d {
  */
 
 /**
- * @typedef {Object} Bounds2d Bounding box, bounds for short.
- * @prop {Readonly<Vector2d>} max For axis-aligned bounding boxes, it is usually the bottom-right point.
- * @prop {Readonly<Vector2d>} min For axis-aligned bounding boxes, it is usually the top-left point.
+ * @typedef {{
+ *   [Symbol.iterator](): Generator<Readonly<Edge>, void, unknown>;
+ *   get: (index: number) => Readonly<Edge>;
+ *   length: Readonly<number>;
+ * }} EdgeList
+ */
+
+/**
+ * @typedef {{
+ *   verts: Vertex[],
+ *   edges: EdgeList,
+ *   aabb: Bounds2d,
+ *   calcOobb: () => Bounds2d
+ * }} TransformedPolygon2d
  */

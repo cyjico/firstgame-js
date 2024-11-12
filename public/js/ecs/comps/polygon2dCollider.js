@@ -38,7 +38,7 @@ export default class Polygon2dCollider extends Polygon2d {
   };
 
   /**
-   * @param {readonly import('./polygon2d.js').Vertex[]} verts
+   * @param {import('./polygon2d.js').Vertex[]} verts
    */
   constructor(verts) {
     super(verts);
