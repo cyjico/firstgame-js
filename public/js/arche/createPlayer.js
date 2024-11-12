@@ -62,7 +62,7 @@ export default function createPlayer(entMger, inputSys, pos) {
         const dir = new Vector2d(inputSys.mouse.x, inputSys.mouse.y)
           .sub(t2d.pos)
           .normalize();
-        createBullet(entMger, 'player', dir, 500, t2d.pos, Math.atan2(dir.y, dir.x));
+        createBullet(entMger, dir, 500, t2d.pos, Math.atan2(dir.y, dir.x));
       }
     },
     fixedUpdate: null,
