@@ -70,8 +70,6 @@ export default class Polygon2dCollision extends Sys {
       const t1 = entMger.getComp_t(ent1, Transform2d);
       if (!t1) continue;
 
-      const tp1 = c1.calcTransformed(t1);
-
       if (!fcache.rst.has(ent1)) {
         fcache.rst.add(ent1);
         c1.prevColState = c1.curColState;
@@ -92,14 +90,21 @@ export default class Polygon2dCollision extends Sys {
         const t2 = entMger.getComp_t(ent2, Transform2d);
         if (!c2 || !t2) continue;
 
-        const tp2 = c2.calcTransformed(t2);
-
         // Save as having been calculated already.
         if (!fcache.col.has(ent1)) fcache.col.set(ent1, new Set());
         fcache.col.get(ent1)?.add(ent2);
 
-        if (!testBoundsBounds(tp1.aabb, tp2.aabb))
+        if (
+          !c1.collidesWith.has(c2.tag) &&
+          !c2.collidesWith.has(c1.tag)
+        ) {
           continue;
+        }
+
+        const tp1 = c1.calcTransformed(t1);
+        const tp2 = c2.calcTransformed(t2);
+
+        if (!testBoundsBounds(tp1.aabb, tp2.aabb)) continue;
 
         const mtv = calcMinTranslationVec(tp1, tp2);
         if (mtv) {

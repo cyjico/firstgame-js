@@ -38,10 +38,12 @@ export default class Polygon2dCollider extends Polygon2d {
   };
 
   /**
-   * @param {import('./polygon2d.js').Vertex[]} verts
+   * @param {import("./polygon2d.js").Vertex[]} verts
    */
-  constructor(verts) {
+  constructor(verts, tag='default', tagCollidesWith=['default']) {
     super(verts);
+    this.tag = tag;
+    this.collidesWith = new Set(tagCollidesWith);
   }
 
   /**
