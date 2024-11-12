@@ -1,3 +1,4 @@
+import { wrap } from '../util/mathplus.js';
 import Matrix3x3 from '../util/matrix3x3.js';
 import Vector2d from '../util/vector2d.js';
 
@@ -10,13 +11,22 @@ export default class Transform2d {
     /**
      * Rotation in radians.
      *
+     * @protected
      * @type {number}
      */
-    this.rot = rot;
+    this._rot = rot;
     /**
      * @type {Vector2d}
      */
     this.scl = new Vector2d(scl[0], scl[1]);
+  }
+
+  get rot() {
+    return this._rot;
+  }
+
+  set rot(value) {
+    this._rot = wrap(value, 0, Math.PI * 2);
   }
 
   /**
