@@ -1,4 +1,3 @@
-import Vector2d from '../util/vector2d.js';
 
 /**
  * Calculates the area of a polygon.
