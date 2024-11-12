@@ -37,13 +37,17 @@ export default class EntMger {
     // Remove entity from components map and component-to-entity map
     if (!this.#ent_CompsMap.has(entityId)) return false;
 
-    // Remove from the component-to-entity map
-    const components = this.#ent_CompsMap.get(entityId);
+    // Remove entity from the component-to-entity map
+    const components = /** @type {Map<string, any>} */ (
+      this.#ent_CompsMap.get(entityId)
+    );
 
-    for (const compName in components)
-      this.#comp_EntsMap.get(compName)?.delete(entityId);
+    for (const [key] of components)
+      this.#comp_EntsMap.get(key)?.delete(entityId);
 
+    // Remove entity from the entity-to-components map
     this.#ent_CompsMap.delete(entityId);
+
     this.#freeEntIds.push(entityId);
     return true;
   }
