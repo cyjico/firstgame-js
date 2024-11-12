@@ -12,7 +12,7 @@ import EntMger from './core/entMger.js';
  */
 
 export default class GameLoop {
-  static DELTA_TIME_TARGET = (1 / 60) * 1000;
+  static DELTA_TIME_TARGET = (1 / 144) * 1000;
 
   entMger = new EntMger();
 
