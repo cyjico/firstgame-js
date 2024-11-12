@@ -28,7 +28,7 @@ export class BulletSys extends Sys {
   }
 
   /** @type {import('../ecs/core/sys.js').SysAction} */
-  update = (ginfo) => {
+  fixedUpdate = (ginfo) => {
     const ents = ginfo.entMger().getEntsWithComp_t(BulletComp);
 
     for (const ent of ents) {
@@ -37,7 +37,7 @@ export class BulletSys extends Sys {
       if (!bcomp || !t2d) return;
 
       t2d.pos = bcomp.pos
-        .add(bcomp.vec.clone().mul(ginfo.time.dt * 0.001))
+        .add(bcomp.vec.clone().mul(ginfo.time.fixedDt * 0.001))
         .clone();
       t2d.rot = bcomp.rot;
 
