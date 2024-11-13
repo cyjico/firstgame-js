@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "module": "ESNext",
     "target": "ES2022",
     "checkJs": true,
     "strict": true,
+    "baseUrl": "."
   },
   "include": ["public/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "**/node_modules/*"]
 }
