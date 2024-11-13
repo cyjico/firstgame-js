@@ -21,19 +21,26 @@ export default class Vector2d {
   }
 
   /**
-   * MODIFIES the Vector2d.
-   *
+   * @param {number} x
+   * @param {number} y
    * @returns {Vector2d}
    */
-  negate() {
+  set(x, y) {
+    this.x = x;
+    this.y = y;
+    return this;
+  }
+
+  /**
+   * @returns {Vector2d}
+   */
+  neg() {
     this.x = -this.x;
     this.y = -this.y;
     return this;
   }
 
   /**
-   * MODIFIES the Vector2d.
-   *
    * @param {Vector2d} vector
    * @returns {Vector2d}
    */
@@ -44,8 +51,6 @@ export default class Vector2d {
   }
 
   /**
-   * MODIFIES the Vector2d.
-   *
    * @param {Vector2d} vector
    * @returns {Vector2d}
    */
@@ -56,8 +61,6 @@ export default class Vector2d {
   }
 
   /**
-   * MODIFIES the Vector2d.
-   *
    * @param {number} n
    * @returns {Vector2d}
    */
@@ -68,8 +71,6 @@ export default class Vector2d {
   }
 
   /**
-   * MODIFIES the Vector2d.
-   *
    * @param {number} n
    * @returns {Vector2d}
    */
@@ -84,7 +85,7 @@ export default class Vector2d {
    * @returns {boolean}
    */
   equals(vector) {
-    return this.clone().sub(vector).sqrMagnitude() < Number.EPSILON;
+    return this.cpy().sub(vector).sqrMag() < Number.EPSILON;
   }
 
   /**
@@ -92,7 +93,7 @@ export default class Vector2d {
    * @returns {boolean}
    */
   notEquals(vector) {
-    return this.clone().sub(vector).sqrMagnitude() >= Number.EPSILON;
+    return this.cpy().sub(vector).sqrMag() >= Number.EPSILON;
   }
 
   /**
@@ -103,48 +104,35 @@ export default class Vector2d {
     return `(${this.x.toString(radix)}, ${this.y.toString(radix)})`;
   }
 
-  magnitude() {
+  mag() {
     return Math.sqrt(this.x * this.x + this.y * this.y);
   }
 
-  sqrMagnitude() {
+  sqrMag() {
     return this.x * this.x + this.y * this.y;
   }
 
   /**
    * @returns {Vector2d}
    */
-  normalized() {
-    return this.clone().normalize();
+  norm() {
+    const mag = this.mag();
+    if (mag > Number.EPSILON) return this.div(mag);
+    else return this.set(0, 0);
   }
 
   /**
-   * @returns {Vector2d}
+   * @returns {Vector2d} Copy (aka 'clone') of the vector.
    */
-  clone() {
+  cpy() {
     return new Vector2d(this.x, this.y);
   }
 
   /**
-   * MODIFIES the Vector2d.
-   *
-   * @param {number} x
-   * @param {number} y
-   * @returns {Vector2d}
+   * @returns {Vector2d} Normalized copy of the vector.
    */
-  set(x, y) {
-    this.x = x;
-    this.y = y;
-    return this;
-  }
-
-  /**
-   * @returns {Vector2d}
-   */
-  normalize() {
-    const mag = this.magnitude();
-    if (mag > Number.EPSILON) return this.div(mag);
-    else return this.set(0, 0);
+  normed() {
+    return this.cpy().norm();
   }
 
   /**
@@ -219,9 +207,7 @@ export default class Vector2d {
    * @returns {number} Angle in radians.
    */
   static angle(from, to) {
-    const denominator = Math.sqrt(
-      Math.abs(from.sqrMagnitude() * to.sqrMagnitude()),
-    );
+    const denominator = Math.sqrt(Math.abs(from.sqrMag() * to.sqrMag()));
     if (denominator < 1e-15) return 0;
 
     const dot = clamp(Vector2d.dot(from, to) / denominator, -1, 1);
@@ -234,8 +220,8 @@ export default class Vector2d {
    * @returns {Vector2d}
    */
   static clampMagnitude(vector, maxLength) {
-    if (vector.sqrMagnitude() > maxLength * maxLength)
-      return vector.normalized().mul(maxLength);
+    if (vector.sqrMag() > maxLength * maxLength)
+      return vector.normed().mul(maxLength);
     else return vector;
   }
 
@@ -245,7 +231,7 @@ export default class Vector2d {
    * @returns {number}
    */
   static distance(from, to) {
-    return from.clone().sub(to).magnitude();
+    return from.cpy().sub(to).mag();
   }
 
   /**
@@ -302,16 +288,12 @@ export default class Vector2d {
    * @returns {Vector2d}
    */
   static moveTowards(current, target, maxDistanceDelta) {
-    const difference = target.clone().sub(current);
-    const distance = difference.magnitude();
+    const difference = target.cpy().sub(current);
+    const distance = difference.mag();
     if (distance <= maxDistanceDelta || distance < Number.EPSILON)
       return target;
     else
-      return difference
-        .clone()
-        .div(distance)
-        .mul(maxDistanceDelta)
-        .add(current);
+      return difference.cpy().div(distance).mul(maxDistanceDelta).add(current);
   }
 
   /**
@@ -328,7 +310,7 @@ export default class Vector2d {
    * @returns {Vector2d}
    */
   static project(vector, onNormal) {
-    const sqrMag = onNormal.sqrMagnitude();
+    const sqrMag = onNormal.sqrMag();
     if (sqrMag < Number.EPSILON) return Vector2d.zero;
     else return onNormal.mul(Vector2d.dot(vector, onNormal)).div(sqrMag);
   }
@@ -340,7 +322,7 @@ export default class Vector2d {
    */
   static reflect(direction, normal) {
     return direction
-      .clone()
+      .cpy()
       .mul(-2 * Vector2d.dot(normal, direction))
       .add(direction);
   }
