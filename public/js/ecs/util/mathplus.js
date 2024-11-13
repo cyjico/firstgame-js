@@ -42,3 +42,25 @@ export function wrap(n, min, max) {
 export function approx(a, b, tolerance = 0.001953125) {
   return Math.abs(a - b) < tolerance;
 }
+
+/**
+ * Linear interpolation but unclamped.
+ *
+ * @param {number} a
+ * @param {number} b
+ * @param {number} t
+ */
+export function lerp(a, b, t) {
+  return unclampedLerp(a, b, clamp(t, 0, 1));
+}
+
+/**
+ * Linear interpolation but unclamped.
+ *
+ * @param {number} a
+ * @param {number} b
+ * @param {number} t
+ */
+export function unclampedLerp(a, b, t) {
+  return a + (b - a) * t;
+}

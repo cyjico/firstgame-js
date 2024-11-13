@@ -16,14 +16,12 @@ export default class SpriteRenderer extends RendererSlave {
       return;
     }
 
-    const entMger = info.entMger();
-
-    const ents = entMger.getEntsWithComp_t(Sprite);
+    const ents = info.entMger.getEntsWithComp_t(Sprite);
     for (const ent of ents) {
-      const spr = /** @type {Sprite} */ (entMger.getComp_t(ent, Sprite));
+      const spr = /** @type {Sprite} */ (info.entMger.getComp_t(ent, Sprite));
 
-      const t = entMger.getComp_t(ent, Transform2d);
-      if (!t || !spr.image) continue;
+      const t = info.entMger.getComp_t(ent, Transform2d);
+      if (!t || !spr.img) continue;
 
       ctx2d.save();
       
@@ -37,7 +35,7 @@ export default class SpriteRenderer extends RendererSlave {
         tmat.m12,
       );
       
-      const sprmat = spr.getTransformationMatrix();
+      const sprmat = spr.getOffsetTransformationMatrix();
       ctx2d.transform(
         sprmat.m00,
         sprmat.m10,
@@ -48,7 +46,7 @@ export default class SpriteRenderer extends RendererSlave {
       );
 
       ctx2d.drawImage(
-        spr.image,
+        spr.img,
         spr.width * -0.5,
         spr.height * -0.5,
         spr.width,

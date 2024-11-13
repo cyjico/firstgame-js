@@ -34,9 +34,9 @@ export default class Polygon2d {
 
   /**
    * @param {Vertex[]} verts
-   * @param {Object} [preprocessed] Skips procssing and assigns the properties directly.
-   * @param {Edge[]} [preprocessed.edges] Edges of the vertices.
-   * @param {Bounds2d} [preprocessed.oobb] Object-oriented bounds of the vertices.
+   * @param {Object} [opts]
+   * @param {Edge[]} [opts.edges] Edges of the vertices.
+   * @param {Bounds2d} [opts.oobb] Object-oriented bounds of the vertices.
    * @throws `verts` must be greater or equal to 3.
    */
   constructor(verts, { edges = undefined, oobb = undefined } = {}) {
@@ -64,7 +64,7 @@ export default class Polygon2d {
             start: this._verts[i],
             end: this._verts[i].vnext,
             calcNormal() {
-              const dir = this.end.clone().sub(this.start).normalized();
+              const dir = this.end.cpy().sub(this.start).normed();
 
               return new Vector2d(-dir.y, dir.x);
             },

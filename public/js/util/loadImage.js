@@ -1,4 +1,6 @@
-/** @type {Map<string, InstanceType<Image>>} */
+/** 
+ * @type {Map<string, CanvasImageSource>}
+ */
 const imageCache = new Map();
 
 /**

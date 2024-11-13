@@ -39,23 +39,29 @@ export default class Polygon2dCollider extends Polygon2d {
 
   /**
    * @param {import("./polygon2d.js").Vertex[]} verts
-   * @param {Object} [preprocessed] Skips procssing and assigns the properties directly.
-   * @param {import('./polygon2d.js').Edge[]} [preprocessed.edges] Edges of the vertices.
-   * @param {import('./polygon2d.js').Bounds2d} [preprocessed.oobb] Object-oriented bounds of the vertices.
-   * @param {Object} [rules] Collision rules.
-   * @param {number} [rules.layer] Collision layer. It defaults to 1.
-   * @param {number} [rules.mask] Collision mask. It defaults to 1.
+   * @param {Object} [opts] Skips procssing and assigns the properties directly.
+   * @param {import('./polygon2d.js').Edge[]} [opts.edges] Edges of the vertices.
+   * @param {import('./polygon2d.js').Bounds2d} [opts.oobb] Object-oriented bounds of the vertices.
+   * @param {number} [opts.layer] Collision layer. It defaults to 1.
+   * @param {number} [opts.mask] Collision mask. It defaults to 1.
+   * @param {boolean} [opts.phantom] Doesn't register a physical reaction with other colliders.
    */
   constructor(
     verts,
-    { edges = undefined, oobb = undefined } = {},
-    { layer = 0b1, mask = 0b1 } = {},
+    {
+      edges = undefined,
+      oobb = undefined,
+      layer = 0b1,
+      mask = 0b1,
+      phantom = false,
+    } = {},
   ) {
     super(verts, { edges, oobb });
 
     this.rules = {
       layer,
       mask,
+      phantom,
     };
   }
 
