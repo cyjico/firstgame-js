@@ -1,4 +1,5 @@
 import EntMger from './core/entMger.js';
+import inputHandler from './systems/inputHandler.js';
 
 /**
  * @typedef {Object} GameLoopInfo
@@ -59,6 +60,7 @@ export default class GameLoop {
       fixedUpdate: [],
     };
 
+    systems.push(inputHandler);
     for (let i = 0; i < systems.length; i++) {
       const sys = systems[i];
 
