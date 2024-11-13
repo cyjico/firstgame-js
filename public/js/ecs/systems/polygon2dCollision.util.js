@@ -94,13 +94,13 @@ export function calcMinTranslationVec(poly1, poly2) {
     }
   }
 
-  const mtv = smallestAxis.clone().mul(smallestOverlap);
+  const mtv = smallestAxis.cpy().mul(smallestOverlap);
 
   // Make sure the minimum translation vector points to `poly2`.
-  const p2c = poly2.aabb.max.clone().add(poly2.aabb.min).div(2);
-  const p1c = poly1.aabb.max.clone().add(poly1.aabb.min).div(2);
+  const p2c = poly2.aabb.max.cpy().add(poly2.aabb.min).div(2);
+  const p1c = poly1.aabb.max.cpy().add(poly1.aabb.min).div(2);
   const dir = p2c.sub(p1c);
-  return Vector2d.dot(mtv, dir) < 0 ? mtv.negate() : mtv;
+  return Vector2d.dot(mtv, dir) < 0 ? mtv.neg() : mtv;
 }
 
 /**

@@ -4,21 +4,21 @@ import Vector2d from '../util/vector2d.js';
 export default class Sprite {
   /**
    * @param {Object} options
-   * @param {HTMLImageElement} [options.image]
+   * @param {CanvasImageSource} [options.img]
    * @param {number} [options.width]
    * @param {number} [options.height]
-   * @param {[number, number]} [options.pos]
-   * @param {number} [options.rot]
+   * @param {[number, number]} [options.offpos]
+   * @param {number} [options.offrot]
    */
   constructor({
-    image = undefined,
+    img = undefined,
     width = 25,
     height = 25,
-    pos = [0, 0],
-    rot = 1.5708,
+    offpos = [0, 0],
+    offrot = 1.5708,
   }) {
-    /** @type {HTMLImageElement | undefined} */
-    this.image = image;
+    /** @type {CanvasImageSource | undefined} */
+    this.img = img;
 
     /** @type {number} */
     this.width = width;
@@ -26,17 +26,17 @@ export default class Sprite {
     this.height = height;
 
     /** @type {Vector2d} */
-    this.pos = new Vector2d(pos[0], pos[1]);
+    this.offpos = new Vector2d(...offpos);
 
     /**
      * Rotation in radians.
      *
      * @type {number}
      */
-    this.rot = rot;
+    this.offrot = offrot;
   }
 
-  getTransformationMatrix() {
-    return Matrix3x3.createTRS(this.pos, this.rot, Vector2d.one);
+  getOffsetTransformationMatrix() {
+    return Matrix3x3.createTRS(this.offpos, this.offrot, Vector2d.one);
   }
 }
