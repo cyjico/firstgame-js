@@ -9,7 +9,7 @@ import inputHandler from './systems/inputHandler.js';
  *  dt: number,
  *  t: number
  * }} time Various times in milliseconds.
- * @prop {() => EntMger} entMger
+ * @prop {EntMger} entMger
  */
 
 export default class GameLoop {
@@ -40,7 +40,7 @@ export default class GameLoop {
       dt: 0,
       t: 0,
     },
-    entMger: () => this.entMger,
+    entMger: this.entMger,
   };
 
   /**
