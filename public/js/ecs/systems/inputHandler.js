@@ -1,4 +1,5 @@
 import Sys from '../core/sys.js';
+import Vector2d from '../util/vector2d.js';
 
 export const MOUSE_BUTTON = {
   PRIMARY: 1,
@@ -9,11 +10,12 @@ export const MOUSE_BUTTON = {
 };
 
 /**
- * System for handling mouse and keyboard input.
+ * Handles mouse and keyboard input.
  *
- * NOTE: Should be placed at the end of the systems stack.
+ * NEVER add this manually.
+ * It is automatically pushed by `GameLoop` to the end of the system stack.
  */
-export default class InputSys extends Sys {
+const inputHandler = new (class InputHandler extends Sys {
   /**
    * @type {{ down: Set<string>, pressed: Set<string>, up: Set<string> }}
    */
@@ -24,42 +26,54 @@ export default class InputSys extends Sys {
   };
 
   mouse = {
-    x: 0,
-    y: 0,
+    pos: Vector2d.zero,
     buttons: {
       down: 0,
       pressed: 0,
     },
   };
 
-  /**
-   * @param {HTMLElement} [baseElement]
-   */
-  constructor(baseElement = document.body) {
+  constructor() {
     super();
     window.addEventListener('keydown', this.#onKeyDown);
     window.addEventListener('keyup', this.#onKeyUp);
 
-    baseElement.addEventListener('mousedown', this.#onMouseDown);
-    baseElement.addEventListener('mouseup', this.#onMouseUp);
-    baseElement.addEventListener('mousemove', this.#onMouseMove);
+    document.addEventListener('mousedown', this.#onMouseDown);
+    document.addEventListener('mouseup', this.#onMouseUp);
+    document.addEventListener('mousemove', this.#onMouseMove);
   }
 
   /**
    * @type {import('../core/sys.js').SysAction}
    */
   update = () => {
-    this.keys.down.clear();
     this.keys.up.clear();
+    this.keys.down.clear();
 
     this.mouse.buttons.down = 0;
   };
+
+  /**
+   * @param {string} key
+   */
+  isKeyDown = (key) => inputHandler.keys.down.has(key);
+
+  /**
+   * @param {string} key
+   */
+  isKeyPressed = (key) => inputHandler.keys.pressed.has(key);
+
+  /**
+   * @param {string} key
+   */
+  isKeyUp = (key) => inputHandler.keys.up.has(key);
 
   /**
    * @param {KeyboardEvent} event
    */
   #onKeyDown = (event) => {
     if (!event.repeat) this.keys.down.add(event.key);
+
     this.keys.pressed.add(event.key);
   };
 
@@ -93,7 +107,8 @@ export default class InputSys extends Sys {
       event.target
     ).getBoundingClientRect();
 
-    this.mouse.x = event.clientX - bRect.left;
-    this.mouse.y = event.clientY - bRect.top;
+    this.mouse.pos.set(event.clientX - bRect.left, event.clientY - bRect.top);
   };
-}
+})();
+
+export default inputHandler;
