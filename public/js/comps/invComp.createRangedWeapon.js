@@ -75,6 +75,6 @@ function createProjectile(entMger, dir, spd, [t2d, sprite, poly2dCod, hdmger]) {
     poly2dCod,
     hdmger,
     movComp,
-    new OutOfBoundsComp(),
+    new OutOfBoundsComp(Math.max(sprite.width, sprite.height) * 1.1),
   );
 }

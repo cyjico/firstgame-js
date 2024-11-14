@@ -1,3 +1,5 @@
 export class OutOfBoundsComp {
-  size = 50;
+  constructor(size = 50) {
+    this.size = size;
+  }
 }
