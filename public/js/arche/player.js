@@ -99,7 +99,6 @@ export async function createPlayer(entMger, pos) {
     new InvComp([
       createRangedWeapon({
         name: 'default',
-        sprite: new Sprite({}),
         range: 10,
         projSpd: 1,
         projDmg: 10,

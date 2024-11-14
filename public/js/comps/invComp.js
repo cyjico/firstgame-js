@@ -10,14 +10,13 @@ export default class InvComp {
   /**
    * @param {Object} opts
    * @param {string} opts.name
-   * @param {import('../ecs/comps/sprite.js').default} opts.sprite
    * @param {InvComp_Item_canUseAction} opts.canUse
    * @param {InvComp_Item_useAction} opts.use
+   * @returns {InvComp_Item}
    */
-  static createItem({ name, sprite, canUse, use }) {
+  static createItem({ name, canUse, use }) {
     return {
       name,
-      sprite,
       canUse,
       use,
     };
@@ -27,7 +26,6 @@ export default class InvComp {
 /**
  * @typedef {Object} InvComp_Item
  * @prop {string} name
- * @prop {import('../ecs/comps/sprite.js').default} sprite
  * @prop {InvComp_Item_canUseAction} canUse
  * @prop {InvComp_Item_useAction} use
  */

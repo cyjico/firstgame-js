@@ -7,7 +7,6 @@ import MovementComp from './movementComp.js';
 /**
  * @param {Object} opts
  * @param {string} opts.name
- * @param {import('../ecs/comps/sprite.js').default} opts.sprite
  * @param {number} opts.range
  * @param {number} opts.projDmg
  * @param {number} opts.projSpd
@@ -17,7 +16,6 @@ import MovementComp from './movementComp.js';
  */
 export default function createRangedWeapon({
   name,
-  sprite,
   projDmg,
   projSpd,
   projCount,
@@ -32,7 +30,6 @@ export default function createRangedWeapon({
 
   return InvComp.createItem({
     name: `RangedWeapon::${name}`,
-    sprite: sprite,
     canUse: () => {
       return true;
     },
