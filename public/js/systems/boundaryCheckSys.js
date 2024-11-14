@@ -2,7 +2,7 @@ import { OutOfBoundsComp } from '../comps/outOfBoundsComp.js';
 import Transform2d from '../ecs/comps/transform2d.js';
 import Sys from '../ecs/core/sys.js';
 
-export default class BoundaryCheckSys extends Sys {
+export default class OutOfBoundsSys extends Sys {
   /**
    * @param {HTMLCanvasElement} canvas
    */
