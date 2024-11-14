@@ -1,6 +1,6 @@
 'use strict';
 
-import PlayerSys, { createPlayer } from './arche/player.js';
+import { PlayerSys, createPlayer } from './arche/player.js';
 import GameLoop from './ecs/gameLoop.js';
 import Polygon2dCollision from './ecs/systems/polygon2dCollision.js';
 import Polygon2dRenderer from './ecs/systems/polygon2dRenderer.js';

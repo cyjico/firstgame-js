@@ -15,7 +15,7 @@ import createRangedWeapon from '../comps/invComp.createRangedWeapon.js';
 
 class PlayerComp {}
 
-export default class PlayerSys extends Sys {
+export class PlayerSys extends Sys {
   /**
    * @type {import("../ecs/core/sys.js").SysAction} ginfo
    */
