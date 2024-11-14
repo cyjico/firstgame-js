@@ -6,7 +6,7 @@ import Polygon2dCollision from './ecs/systems/polygon2dCollision.js';
 import Polygon2dRenderer from './ecs/systems/polygon2dRenderer.js';
 import RendererMaster from './ecs/systems/rendererMaster.js';
 import SpriteRenderer from './ecs/systems/spriteRenderer.js';
-import BoundaryCheckSys from './systems/boundaryCheckSys.js';
+import OutOfBoundsSys from './systems/boundaryCheckSys.js';
 import HealthRenderer from './systems/healthRenderer.js';
 import MovementSys from './systems/movementSys.js';
 import debounce from './util/debounce.js';
@@ -34,7 +34,7 @@ const GAME_LOOP = (() => {
   gameLoop.setSystems([
     new PlayerSys(),
     new MovementSys(),
-    new BoundaryCheckSys(CANVAS),
+    new OutOfBoundsSys(CANVAS),
     new Polygon2dCollision(true),
     new RendererMaster(
       CTX2D,
