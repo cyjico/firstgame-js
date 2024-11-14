@@ -3,6 +3,7 @@ import inputHandler from '../ecs/systems/inputHandler.js';
 import HazardComp from './hazardComp.js';
 import InvComp from './invComp.js';
 import MovementComp from './movementComp.js';
+import { OutOfBoundsComp } from './outOfBoundsComp.js';
 
 /**
  * @param {Object} opts
@@ -74,5 +75,6 @@ function createProjectile(entMger, dir, spd, [t2d, sprite, poly2dCod, hdmger]) {
     poly2dCod,
     hdmger,
     movComp,
+    new OutOfBoundsComp(),
   );
 }
