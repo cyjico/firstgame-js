@@ -11,9 +11,17 @@ import loadImage from '../../util/loadImage.js';
 import { PlayerComp } from '../player.js';
 
 export class ChaserComp {
-  onCooldown = false;
-  /** @type {number | null} */
-  cooldownTimeout = null;
+  /**
+   * @param {Object} [opts]
+   * @param {number} [opts.sqrRadius]
+   * @param {number} [opts.cooldownMs]
+   */
+  constructor({ sqrRadius = 35 * 35, cooldownMs = 500 } = {}) {
+    this.sqrRadius = sqrRadius;
+    this.cooldownMs = cooldownMs;
+  }
+
+  isCooldown = false;
 }
 
 export class ChaserSys extends Sys {
@@ -36,13 +44,12 @@ export class ChaserSys extends Sys {
    * @param {ChaserComp} chaser
    */
   #applyCooldown(chaser) {
-    if (chaser.onCooldown) return;
+    if (chaser.isCooldown) return;
 
-    chaser.onCooldown = true;
-    chaser.cooldownTimeout = setTimeout(() => {
-      chaser.onCooldown = false;
-      chaser.cooldownTimeout = null;
-    }, 500);
+    chaser.isCooldown = true;
+    setTimeout(() => {
+      chaser.isCooldown = false;
+    }, chaser.cooldownMs);
   }
 
   /** @type {import('public/js/ecs/core/sys.js').SysAction} */
@@ -62,11 +69,10 @@ export class ChaserSys extends Sys {
       if (!chaser || !t2d || !mv || !col) continue;
 
       if (
-        chaser.onCooldown ||
-        player_t2d.pos.cpy().sub(t2d.pos).sqrMag() <= 35 * 35
+        chaser.isCooldown ||
+        player_t2d.pos.cpy().sub(t2d.pos).sqrMag() <= chaser.sqrRadius
       ) {
         mv.targetDir = Vector2d.zero;
-        this.#applyCooldown(chaser);
         continue;
       }
 
@@ -101,7 +107,7 @@ export async function createChaser(entMger, pos, rot) {
       offrot: Math.PI / 2,
     }),
     new MovementComp(),
-    new ChaserComp(),
+    new ChaserComp({}),
     new HazardComp(25, 'enemy', ['enemy']),
   );
 }
