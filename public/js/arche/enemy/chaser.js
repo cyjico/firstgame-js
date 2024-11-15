@@ -42,7 +42,7 @@ export class ChaserSys extends Sys {
     chaser.cooldownTimeout = setTimeout(() => {
       chaser.onCooldown = false;
       chaser.cooldownTimeout = null;
-    }, 1000);
+    }, 500);
   }
 
   /** @type {import('public/js/ecs/core/sys.js').SysAction} */
