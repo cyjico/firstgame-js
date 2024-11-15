@@ -1,4 +1,5 @@
 import EntMger from './core/entMger.js';
+import EvtBus from './evtBus.js';
 import inputHandler from './systems/inputHandler.js';
 
 /**
@@ -10,12 +11,14 @@ import inputHandler from './systems/inputHandler.js';
  *  t: number
  * }} time Various times in milliseconds.
  * @prop {EntMger} entMger
+ * @prop {EvtBus} evtBus
  */
 
 export default class GameLoop {
   static DELTA_TIME_TARGET = (1 / 144) * 1000;
 
   entMger = new EntMger();
+  evtBus = new EvtBus();
 
   /**
    * @type {{
@@ -41,6 +44,7 @@ export default class GameLoop {
       t: 0,
     },
     entMger: this.entMger,
+    evtBus: this.evtBus,
   };
 
   /**
