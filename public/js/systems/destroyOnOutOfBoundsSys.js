@@ -1,8 +1,8 @@
-import { OutOfBoundsComp } from '../comps/outOfBoundsComp.js';
+import { DestroyOnOutOfBoundsComp } from '../comps/destroyOnOutOfBoundsComp.js';
 import Transform2d from '../ecs/comps/transform2d.js';
 import Sys from '../ecs/core/sys.js';
 
-export default class OutOfBoundsSys extends Sys {
+export default class DestroyOnOutOfBoundsSys extends Sys {
   /**
    * @param {HTMLCanvasElement} canvas
    */
@@ -15,8 +15,8 @@ export default class OutOfBoundsSys extends Sys {
    * @type {import('../ecs/core/sys.js').SysAction}
    */
   update = ({ entMger }) => {
-    for (const ent of entMger.getEntsWithComp_t(OutOfBoundsComp)) {
-      const obComp = entMger.getComp_t(ent, OutOfBoundsComp);
+    for (const ent of entMger.getEntsWithComp_t(DestroyOnOutOfBoundsComp)) {
+      const obComp = entMger.getComp_t(ent, DestroyOnOutOfBoundsComp);
       const t2d = entMger.getComp_t(ent, Transform2d);
       if (!obComp || !t2d) continue;
 
