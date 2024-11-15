@@ -1,19 +1,32 @@
 import Polygon2d from './polygon2d.js';
 
+/**
+ * Example:
+ * - F0: NOT COLLIDING => NONE
+ * - F1: COLLIDED => ENTER
+ * - F2: STILL COLLIDING => STAY
+ * - F3: STILL COLLIDING => STAY
+ * - F4: STILL COLLIDING => STAY
+ * - F5: NOT COLLIDING => EXIT
+ * - F6: NOT COLLIDING => NONE
+ */
 export const CollisionState = {
   NONE: 1,
   ENTER: 2,
   STAY: 4,
+  /**
+   * Occurs the frame AFTER the last frame of collision.
+   */
   EXIT: 8,
-  ALL: 2 | 4 | 8,
+  ALL: 2 | 4,
   /** @param {number} num  */
   toString(num) {
     const val = [];
 
-    if (num & 1) val.push('NONE');
-    if (num & 2) val.push('ENTER');
-    if (num & 4) val.push('STAY');
-    if (num & 8) val.push('EXIT');
+    if (num & 1) val.push('none');
+    if (num & 2) val.push('enter');
+    if (num & 4) val.push('stay');
+    if (num & 8) val.push('exit');
 
     return val.join(' & ');
   },
@@ -22,21 +35,15 @@ export const CollisionState = {
 /**
  * @typedef {Object} CollisionInfo
  * @prop {import('../util/vector2d.js').default | null} mtv Minimum translation vector relative to self.
- * @prop {number | null} otherEntId
- * @prop {number} prevState
+ * @prop {number | null} other
  * @prop {number} state
  */
 
 export default class Polygon2dCollider extends Polygon2d {
   /**
-   * @type {CollisionInfo}
+   * @type {Map<number, CollisionInfo>}
    */
-  info = {
-    mtv: null,
-    otherEntId: null,
-    prevState: CollisionState.NONE,
-    state: CollisionState.NONE,
-  };
+  #infos = new Map();
 
   /**
    * @param {import("./polygon2d.js").Vertex[]} verts
@@ -64,6 +71,37 @@ export default class Polygon2dCollider extends Polygon2d {
       mask,
       phantom,
     };
+  }
+
+  /**
+   * @param {number} otherEntId
+   */
+  tryGetInfo(otherEntId) {
+    const info = this.#infos.get(otherEntId);
+    if (info) return info;
+
+    return {
+      mtv: null,
+      otherEntId: null,
+      state: CollisionState.NONE,
+    };
+  }
+
+  /**
+   * @param {number} otherEntId
+   * @param {CollisionInfo} newInfo
+   */
+  trySetInfo(otherEntId, newInfo) {
+    if (newInfo.state & CollisionState.NONE) {
+      this.#infos.delete(otherEntId);
+      return;
+    }
+
+    this.#infos.set(otherEntId, newInfo);
+  }
+
+  getAllInfos() {
+    return this.#infos.values();
   }
 
   /**
