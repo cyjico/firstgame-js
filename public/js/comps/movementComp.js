@@ -14,11 +14,11 @@ export default class MovementComp {
     this.spd = spd;
     this.smoothness = smoothness;
     this.targetDir = targetDir;
-    this._dirDelta = dirDelta;
+    this.__dirDelta__ = dirDelta;
 
     this.rotSpeed = rotSpeed;
     this.rotSmoothness = rotSmoothness;
     this.targetRot = targetRot;
-    this._rotDelta = rotDelta;
+    this.__rotDelta__ = rotDelta;
   }
 }

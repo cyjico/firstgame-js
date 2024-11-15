@@ -14,21 +14,21 @@ export default class MovementSys extends Sys {
       const t2d = entMger.getComp_t(ent, Transform2d);
       if (!movComp || !t2d) return;
 
-      movComp._dirDelta = Vector2d.lerp(
-        movComp._dirDelta,
+      movComp.__dirDelta__ = Vector2d.lerp(
+        movComp.__dirDelta__,
         movComp.targetDir,
         movComp.smoothness * time.fixedDt,
       );
 
-      t2d.pos.add(movComp._dirDelta.cpy().mul(movComp.spd * time.fixedDt));
+      t2d.pos.add(movComp.__dirDelta__.cpy().mul(movComp.spd * time.fixedDt));
 
-      movComp._rotDelta = lerpRot(
-        movComp._rotDelta,
+      movComp.__rotDelta__ = lerpRot(
+        movComp.__rotDelta__,
         wrap(movComp.targetRot - t2d.rot, -Math.PI, Math.PI),
         movComp.rotSmoothness * time.fixedDt,
       );
 
-      t2d.rot += movComp._rotDelta * movComp.rotSpeed * time.fixedDt;
+      t2d.rot += movComp.__rotDelta__ * movComp.rotSpeed * time.fixedDt;
     }
   };
 }
