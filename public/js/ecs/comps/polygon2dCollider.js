@@ -3,9 +3,9 @@ import Polygon2d from './polygon2d.js';
 export const CollisionState = {
   NONE: 1,
   ENTER: 2,
-  COLLIDING: 4,
+  STAY: 4,
   EXIT: 8,
-  WIDE_COLLIDING: 2 | 4 | 8,
+  ALL: 2 | 4 | 8,
   /** @param {number} num  */
   toString(num) {
     const val = [];

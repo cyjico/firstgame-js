@@ -17,10 +17,10 @@ function updtColState(isColliding, collider) {
     collider.curColState =
       collider.prevColState & CollisionState.NONE
         ? CollisionState.ENTER
-        : CollisionState.COLLIDING;
+        : CollisionState.STAY;
   } else {
     collider.curColState =
-      collider.prevColState & CollisionState.COLLIDING
+      collider.prevColState & CollisionState.STAY
         ? CollisionState.EXIT
         : CollisionState.NONE;
   }
