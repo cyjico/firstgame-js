@@ -27,11 +27,11 @@ export const CollisionState = {
  */
 
 export default class Polygon2dCollider extends Polygon2d {
-  prevColState = CollisionState.NONE;
-  curColState = CollisionState.NONE;
+  prevState = CollisionState.NONE;
+  curState = CollisionState.NONE;
 
   /** @type {CollisionInfo} */
-  curColInfo = {
+  curInfo = {
     mtv: null,
     self: null,
     other: null,
