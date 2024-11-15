@@ -8,27 +8,27 @@ export default class MovementSys extends Sys {
   /**
    * @type {import('../ecs/core/sys.js').SysAction}
    */
-  fixedUpdate = (ginfo) => {
-    for (const ent of ginfo.entMger.getEntsWithComp_t(MovementComp)) {
-      const movComp = ginfo.entMger.getComp_t(ent, MovementComp);
-      const t2d = ginfo.entMger.getComp_t(ent, Transform2d);
+  fixedUpdate = ({ entMger, time }) => {
+    for (const ent of entMger.getEntsWithComp_t(MovementComp)) {
+      const movComp = entMger.getComp_t(ent, MovementComp);
+      const t2d = entMger.getComp_t(ent, Transform2d);
       if (!movComp || !t2d) return;
 
       movComp.dir = Vector2d.lerp(
         movComp.dir,
         movComp.targetDir,
-        movComp.smoothness * ginfo.time.fixedDt,
+        movComp.smoothness * time.fixedDt,
       );
 
-      t2d.pos.add(movComp.dir.cpy().mul(movComp.spd * ginfo.time.fixedDt));
+      t2d.pos.add(movComp.dir.cpy().mul(movComp.spd * time.fixedDt));
 
       movComp.rot = lerp(
         movComp.rot,
         movComp.targetRot,
-        movComp.rotSmoothness * ginfo.time.fixedDt,
+        movComp.rotSmoothness * time.fixedDt,
       );
 
-      t2d.rot += movComp.rot * movComp.rotSpeed * ginfo.time.fixedDt;
+      t2d.rot += movComp.rot * movComp.rotSpeed * time.fixedDt;
     }
   };
 }

@@ -14,10 +14,10 @@ export default class OutOfBoundsSys extends Sys {
   /**
    * @type {import('../ecs/core/sys.js').SysAction}
    */
-  update = (ginfo) => {
-    for (const ent of ginfo.entMger.getEntsWithComp_t(OutOfBoundsComp)) {
-      const obComp = ginfo.entMger.getComp_t(ent, OutOfBoundsComp);
-      const t2d = ginfo.entMger.getComp_t(ent, Transform2d);
+  update = ({ entMger }) => {
+    for (const ent of entMger.getEntsWithComp_t(OutOfBoundsComp)) {
+      const obComp = entMger.getComp_t(ent, OutOfBoundsComp);
+      const t2d = entMger.getComp_t(ent, Transform2d);
       if (!obComp || !t2d) continue;
 
       if (
@@ -26,7 +26,7 @@ export default class OutOfBoundsSys extends Sys {
         t2d.pos.y < -obComp.size ||
         t2d.pos.y > this.canvas.height + obComp.size
       )
-        ginfo.entMger.destroyEnt(ent);
+        entMger.destroyEnt(ent);
     }
   };
 }
