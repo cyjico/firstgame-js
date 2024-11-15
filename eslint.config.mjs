@@ -11,18 +11,6 @@ export default [
   {
     files: ['**/*.js'],
     languageOptions: { globals: globals.browser },
-    rules: {
-      // Use jsconfig.json
-      'no-undef': 'off',
-    },
-  },
-  {
-    ignores: ['**/main.js'],
-    files: ['**/*.js'],
-    rules: {
-      // Assume anything not min.js is included in the index.html file
-      'no-unused-vars': 'warn',
-    },
   },
   {
     ...pluginHtml.configs['flat/recommended'],
