@@ -29,19 +29,15 @@ export default class Polygon2dCollision extends Sys {
     super();
 
     this.isResolver = isResolver;
-    /**
-     * For updating the AABB tree.
-     *
-     * @type {Set<number>}
-     */
-    this.prevEnts = new Set();
   }
 
   /**
    * @type {import('../core/sys.js').SysAction}
    */
   fixedUpdate = ({ entMger }) => {
-    /** Current frame cache; resets every frame. */
+    /**
+     * Current frame cache; resets every frame.
+     */
     const fcache = {
       /**
        * Contains the collisions that were already calculated.
@@ -51,21 +47,19 @@ export default class Polygon2dCollision extends Sys {
        */
       col: new Map(),
       /**
-       * Contains the reset'ted collision infos.
+       * Contains the reset[ted] collision infos.
        */
       rst: new Set(),
     };
 
-    const curEnts = new Set(entMger.getEntsWithComp_t(Polygon2dCollider));
-
-    const ents = entMger.getEntsWithComp_t(Polygon2dCollider);
-    for (const ent1 of ents) {
+    for (const ent1 of entMger.getEntsWithComp_t(Polygon2dCollider)) {
       const col1 = entMger.getComp_t(ent1, Polygon2dCollider);
       if (!col1) continue;
 
       const t1 = entMger.getComp_t(ent1, Transform2d);
       if (!t1) continue;
 
+      // Reset ent1 if ent1 wasn't reset[ted] in the current frame.
       if (!fcache.rst.has(ent1)) {
         fcache.rst.add(ent1);
         col1.prevState = col1.curState;
@@ -73,22 +67,18 @@ export default class Polygon2dCollision extends Sys {
       }
 
       const nearbyEnts = entMger.getEntsWithComp_t(Polygon2dCollider);
-
       for (const ent2 of nearbyEnts) {
-        if (
-          ent1 === ent2 ||
-          fcache.col.get(ent1)?.has(ent2) ||
-          fcache.col.get(ent2)?.has(ent1)
-        )
-          continue;
+        if (ent1 === ent2 || fcache.col.get(ent1)?.has(ent2)) continue;
 
         const col2 = entMger.getComp_t(ent2, Polygon2dCollider);
         const t2 = entMger.getComp_t(ent2, Transform2d);
         if (!col2 || !t2) continue;
 
-        // Save as having been calculated already.
-        if (!fcache.col.has(ent1)) fcache.col.set(ent1, new Set());
-        fcache.col.get(ent1)?.add(ent2);
+        // Cache ent1 and ent2 interaction as having been calculated already.
+        if (!fcache.col.get(ent1)?.add(ent2))
+          fcache.col.set(ent1, new Set([ent2]));
+        if (!fcache.col.get(ent2)?.add(ent1))
+          fcache.col.set(ent2, new Set([ent1]));
 
         if (
           (col1.rules.mask & col2.rules.layer) === 0 &&
@@ -107,7 +97,9 @@ export default class Polygon2dCollision extends Sys {
 
           col1.curInfo.self = ent1;
           col1.curInfo.other = ent2;
+          col1.curInfo.mtv = mtv;
 
+          // Reset ent2 if ent2 wasn't reset[ted] in the current frame.
           if (!fcache.rst.has(ent2)) {
             fcache.rst.add(ent2);
             col2.prevState = col2.curState;
@@ -117,11 +109,9 @@ export default class Polygon2dCollision extends Sys {
 
           col2.curInfo.self = ent2;
           col2.curInfo.other = ent1;
+          col2.curInfo.mtv = mtv.neg();
 
           if (this.isResolver && !col1.rules.phantom && !col2.rules.phantom) {
-            col1.curInfo.mtv = mtv;
-            col2.curInfo.mtv = mtv.neg();
-
             const mtvHalf = mtv.cpy().mul(0.5);
             t1.pos.add(mtvHalf);
             t2.pos.sub(mtvHalf);
@@ -129,7 +119,5 @@ export default class Polygon2dCollision extends Sys {
         }
       }
     }
-
-    this.prevEnts = curEnts;
   };
 }
