@@ -64,6 +64,7 @@ export class PlayerSys extends Sys {
           lineWidth: 2,
           fillStyle: '#f5bd0d',
         }),
+        new HealthComp(50),
       );
     }
   };
@@ -75,12 +76,10 @@ export class PlayerSys extends Sys {
  */
 export async function createPlayer(entMger, pos) {
   const poly2dcol = Polygon2dCollider.fromRect(28, 25);
-  poly2dcol.rules.layer = CollisionLayer.PLAYER;
-  poly2dcol.rules.mask = CollisionLayer.DEFAULT | CollisionLayer.ENEMY;
-
   const proj_poly2dcol = Polygon2dCollider.fromRect(40, 25);
-  proj_poly2dcol.rules.layer = CollisionLayer.PLAYER;
-  proj_poly2dcol.rules.mask = CollisionLayer.DEFAULT | CollisionLayer.ENEMY;
+  poly2dcol.rules.layer = proj_poly2dcol.rules.layer = CollisionLayer.PLAYER;
+  poly2dcol.rules.mask = proj_poly2dcol.rules.mask =
+    CollisionLayer.DEFAULT | CollisionLayer.ENEMY;
 
   entMger.addComps(
     entMger.createEnt(),
