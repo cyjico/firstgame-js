@@ -10,17 +10,17 @@ export default class SpriteRenderer extends RendererSlave {
   /**
    * @type {import('./rendererMaster.js').RendererSlaveAction}
    */
-  update = (ctx2d, info) => {
+  update = (ctx2d, { entMger }) => {
     if (!ctx2d) {
       console.warn(`Tried rendering but failed.`);
       return;
     }
 
-    const ents = info.entMger.getEntsWithComp_t(Sprite);
+    const ents = entMger.getEntsWithComp_t(Sprite);
     for (const ent of ents) {
-      const spr = /** @type {Sprite} */ (info.entMger.getComp_t(ent, Sprite));
+      const spr = /** @type {Sprite} */ (entMger.getComp_t(ent, Sprite));
 
-      const t = info.entMger.getComp_t(ent, Transform2d);
+      const t = entMger.getComp_t(ent, Transform2d);
       if (!t || !spr.img) continue;
 
       ctx2d.save();

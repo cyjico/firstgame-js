@@ -11,21 +11,21 @@ export default class Polygon2dRenderer extends RendererSlave {
   /**
    * @type {import('./rendererMaster.js').RendererSlaveAction}
    */
-  update = (ctx2d, ginfo) => {
-    const ents = ginfo.entMger.getEntsWithComp_t(Polygon2d);
+  update = (ctx2d, { entMger }) => {
+    const ents = entMger.getEntsWithComp_t(Polygon2d);
     for (const ent of ents) {
       const polygon = /** @type {Polygon2d} */ (
-        ginfo.entMger.getComp_t(ent, Polygon2d)
+        entMger.getComp_t(ent, Polygon2d)
       );
 
-      const transform = ginfo.entMger.getComp_t(ent, Transform2d);
+      const transform = entMger.getComp_t(ent, Transform2d);
       if (!transform) continue;
 
       const npoly = polygon.calcTransformed(transform);
 
       ctx2d.save();
 
-      const material = ginfo.entMger.getComp_t(ent, Polygon2dMaterial);
+      const material = entMger.getComp_t(ent, Polygon2dMaterial);
       if (material) material.setStyling(ctx2d);
 
       ctx2d.beginPath();

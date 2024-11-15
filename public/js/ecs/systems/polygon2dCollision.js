@@ -42,7 +42,7 @@ export default class Polygon2dCollision extends Sys {
   /**
    * @type {import('../core/sys.js').SysAction}
    */
-  fixedUpdate = (ginfo) => {
+  fixedUpdate = ({ entMger }) => {
     /** Current frame cache; resets every frame. */
     const fcache = {
       /**
@@ -58,14 +58,14 @@ export default class Polygon2dCollision extends Sys {
       rst: new Set(),
     };
 
-    const curEnts = new Set(ginfo.entMger.getEntsWithComp_t(Polygon2dCollider));
+    const curEnts = new Set(entMger.getEntsWithComp_t(Polygon2dCollider));
 
-    const ents = ginfo.entMger.getEntsWithComp_t(Polygon2dCollider);
+    const ents = entMger.getEntsWithComp_t(Polygon2dCollider);
     for (const ent1 of ents) {
-      const c1 = ginfo.entMger.getComp_t(ent1, Polygon2dCollider);
+      const c1 = entMger.getComp_t(ent1, Polygon2dCollider);
       if (!c1) continue;
 
-      const t1 = ginfo.entMger.getComp_t(ent1, Transform2d);
+      const t1 = entMger.getComp_t(ent1, Transform2d);
       if (!t1) continue;
 
       if (!fcache.rst.has(ent1)) {
@@ -79,7 +79,7 @@ export default class Polygon2dCollision extends Sys {
         updtColState(false, c1);
       }
 
-      const nearbyEnts = ginfo.entMger.getEntsWithComp_t(Polygon2dCollider);
+      const nearbyEnts = entMger.getEntsWithComp_t(Polygon2dCollider);
 
       for (const ent2 of nearbyEnts) {
         if (
@@ -89,8 +89,8 @@ export default class Polygon2dCollision extends Sys {
         )
           continue;
 
-        const c2 = ginfo.entMger.getComp_t(ent2, Polygon2dCollider);
-        const t2 = ginfo.entMger.getComp_t(ent2, Transform2d);
+        const c2 = entMger.getComp_t(ent2, Polygon2dCollider);
+        const t2 = entMger.getComp_t(ent2, Transform2d);
         if (!c2 || !t2) continue;
 
         // Save as having been calculated already.

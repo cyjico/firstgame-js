@@ -7,17 +7,17 @@ import Sys from '../ecs/core/sys.js';
 
 export default class HazardSys extends Sys {
   /** @type {import("../ecs/core/sys.js").SysAction} */
-  fixedUpdate = (ginfo) => {
-    for (const ent of ginfo.entMger.getEntsWithComp_t(HazardComp)) {
-      const hazard = ginfo.entMger.getComp_t(ent, HazardComp);
-      const poly2dCol = ginfo.entMger.getComp_t(ent, Polygon2dCollider);
+  fixedUpdate = ({ entMger }) => {
+    for (const ent of entMger.getEntsWithComp_t(HazardComp)) {
+      const hazard = entMger.getComp_t(ent, HazardComp);
+      const poly2dCol = entMger.getComp_t(ent, Polygon2dCollider);
       if (!hazard || !poly2dCol) return;
 
       if (
         poly2dCol.curColState & CollisionState.ENTER &&
         poly2dCol.curColInfo.other
       ) {
-        const other_health = ginfo.entMger.getComp_t(
+        const other_health = entMger.getComp_t(
           poly2dCol.curColInfo.other,
           HealthComp,
         );
@@ -25,7 +25,7 @@ export default class HazardSys extends Sys {
 
         other_health.curHp -= hazard.dmg;
         if (other_health.curHp <= 0)
-          ginfo.entMger.destroyEnt(poly2dCol.curColInfo.other);
+          entMger.destroyEnt(poly2dCol.curColInfo.other);
       }
     }
   };
