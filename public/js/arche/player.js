@@ -88,7 +88,7 @@ export async function createPlayer(entMger, pos) {
         name: 'default',
         range: 10,
         projSpd: 1,
-        projDmg: 50,
+        projDmg: 25,
         projCount: 1,
         projSprite: new Sprite({
           img: await loadImage(
