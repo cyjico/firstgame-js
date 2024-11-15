@@ -62,19 +62,18 @@ export default function createRangedWeapon({
  *   HazardComp
  * ]} comps
  */
-function createProjectile(entMger, dir, spd, [t2d, sprite, poly2dCod, hdmger]) {
-  const movComp = new MovementComp();
-  movComp.dir = movComp.targetDir = dir;
-  movComp.spd = spd;
-  movComp.targetRot = 0;
-
+function createProjectile(entMger, dir, spd, [t2d, sprite, poly2dCol, hazard]) {
   entMger.addComps(
     entMger.createEnt(),
     t2d,
     sprite,
-    poly2dCod,
-    hdmger,
-    movComp,
+    poly2dCol,
+    hazard,
+    new MovementComp({
+      targetDir: dir,
+      spd: spd,
+      targetRot: 0,
+    }),
     new OutOfBoundsComp(Math.max(sprite.width, sprite.height) * 1.1),
   );
 }
