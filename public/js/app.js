@@ -7,6 +7,7 @@ import Polygon2dCollision from './ecs/systems/polygon2dCollision.js';
 import Polygon2dRenderer from './ecs/systems/polygon2dRenderer.js';
 import RendererMaster from './ecs/systems/rendererMaster.js';
 import SpriteRenderer from './ecs/systems/spriteRenderer.js';
+import DestroyOnImpactSys from './systems/destroyOnImpactSys.js';
 import DestroyOnOutOfBoundsSys from './systems/destroyOnOutOfBoundsSys.js';
 import HazardSys from './systems/hazardSys.js';
 import HealthRenderer from './systems/healthRenderer.js';
@@ -46,6 +47,7 @@ const GAME_LOOP = (() => {
       new Polygon2dRenderer(),
     ),
     new DestroyOnOutOfBoundsSys(CANVAS),
+    new DestroyOnImpactSys(),
   ]);
 
   return gameLoop;

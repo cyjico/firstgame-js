@@ -3,7 +3,8 @@ import inputHandler from '../ecs/systems/inputHandler.js';
 import HazardComp from './hazardComp.js';
 import InvComp from './invComp.js';
 import MovementComp from './movementComp.js';
-import { OutOfBoundsComp } from './outOfBoundsComp.js';
+import { DestroyOnOutOfBoundsComp } from './destroyOnOutOfBoundsComp.js';
+import { DestroyOnImpact } from './destroyOnImpactComp.js';
 
 /**
  * @param {Object} opts
@@ -74,6 +75,7 @@ function createProjectile(entMger, dir, spd, [t2d, sprite, poly2dCol, hazard]) {
       spd: spd,
       targetRot: t2d.rot,
     }),
-    new OutOfBoundsComp(Math.max(sprite.width, sprite.height) * 1.1),
+    new DestroyOnOutOfBoundsComp(Math.max(sprite.width, sprite.height) * 1.1),
+    new DestroyOnImpact(),
   );
 }
