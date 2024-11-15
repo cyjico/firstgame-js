@@ -62,8 +62,8 @@ export default class Polygon2dCollision extends Sys {
       // Reset ent1 if ent1 wasn't reset[ted] in the current frame.
       if (!fcache.rst.has(ent1)) {
         fcache.rst.add(ent1);
-        col1.prevState = col1.curState;
-        col1.curState = CollisionState.NONE;
+        col1.info.prevState = col1.info.state;
+        col1.info.state = getNewState(col1.info.prevState, false);
       }
 
       const nearbyEnts = entMger.getEntsWithComp_t(Polygon2dCollider);
@@ -93,23 +93,19 @@ export default class Polygon2dCollision extends Sys {
 
         const mtv = calcMinTranslationVec(tc1, tc2);
         if (mtv) {
-          col1.curState = getNewState(col1.prevState, true);
-
-          col1.curInfo.self = ent1;
-          col1.curInfo.other = ent2;
-          col1.curInfo.mtv = mtv;
+          col1.info.state = getNewState(col1.info.prevState, true);
+          col1.info.otherEntId = ent2;
+          col1.info.mtv = mtv;
 
           // Reset ent2 if ent2 wasn't reset[ted] in the current frame.
           if (!fcache.rst.has(ent2)) {
             fcache.rst.add(ent2);
-            col2.prevState = col2.curState;
+            col2.info.prevState = col2.info.state;
           }
-
-          col2.curState = getNewState(col1.prevState, true);
-
-          col2.curInfo.self = ent2;
-          col2.curInfo.other = ent1;
-          col2.curInfo.mtv = mtv.neg();
+          
+          col2.info.state = getNewState(col1.info.prevState, true);
+          col2.info.otherEntId = ent1;
+          col2.info.mtv = mtv.neg();
 
           if (this.isResolver && !col1.rules.phantom && !col2.rules.phantom) {
             const mtvHalf = mtv.cpy().mul(0.5);

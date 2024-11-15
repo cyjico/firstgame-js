@@ -14,18 +14,15 @@ export default class HazardSys extends Sys {
       if (!hazard || !poly2dCol) return;
 
       if (
-        poly2dCol.curState & CollisionState.ENTER &&
-        poly2dCol.curInfo.other
+        poly2dCol.info.state & CollisionState.ENTER &&
+        poly2dCol.info.otherEntId
       ) {
-        const other_health = entMger.getComp_t(
-          poly2dCol.curInfo.other,
-          HealthComp,
-        );
+        const other_health = entMger.getComp_t(ent, HealthComp);
         if (!other_health) return;
 
         other_health.curHp -= hazard.dmg;
         if (other_health.curHp <= 0)
-          entMger.destroyEnt(poly2dCol.curInfo.other);
+          entMger.destroyEnt(poly2dCol.info.otherEntId);
       }
     }
   };
