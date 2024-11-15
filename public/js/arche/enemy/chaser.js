@@ -12,6 +12,8 @@ import { PlayerComp } from '../player.js';
 
 export class ChaserComp {
   onCooldown = false;
+  /** @type {number | null} */
+  cooldownTimeout = null;
 }
 
 export class ChaserSys extends Sys {
@@ -32,6 +34,11 @@ export class ChaserSys extends Sys {
 
       if (player_t2d.pos.cpy().sub(t2d.pos).sqrMag() <= 35 * 35) {
         mv.targetDir = Vector2d.zero;
+        chaser.onCooldown = true;
+        chaser.cooldownTimeout = setTimeout(() => {
+          chaser.onCooldown = false;
+          chaser.cooldownTimeout = null;
+        }, 1000);
         continue;
       }
 
@@ -67,6 +74,6 @@ export async function createChaser(entMger, pos, rot) {
     }),
     new MovementComp(),
     new ChaserComp(),
-    new HazardComp(5, 'enemy', ['enemy']),
+    new HazardComp(25, 'enemy', ['enemy']),
   );
 }
