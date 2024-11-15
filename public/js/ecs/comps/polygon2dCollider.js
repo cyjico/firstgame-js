@@ -12,7 +12,7 @@ export const CollisionState = {
 
     if (num & 1) val.push('NONE');
     if (num & 2) val.push('ENTER');
-    if (num & 4) val.push('COLLIDING');
+    if (num & 4) val.push('STAY');
     if (num & 8) val.push('EXIT');
 
     return val.join(' & ');
@@ -22,19 +22,20 @@ export const CollisionState = {
 /**
  * @typedef {Object} CollisionInfo
  * @prop {import('../util/vector2d.js').default | null} mtv Minimum translation vector relative to self.
- * @prop {number | null} self
- * @prop {number | null} other
+ * @prop {number | null} otherEntId
+ * @prop {number} prevState
+ * @prop {number} state
  */
 
 export default class Polygon2dCollider extends Polygon2d {
-  prevState = CollisionState.NONE;
-  curState = CollisionState.NONE;
-
-  /** @type {CollisionInfo} */
-  curInfo = {
+  /**
+   * @type {CollisionInfo}
+   */
+  info = {
     mtv: null,
-    self: null,
-    other: null,
+    otherEntId: null,
+    prevState: CollisionState.NONE,
+    state: CollisionState.NONE,
   };
 
   /**
