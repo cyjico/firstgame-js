@@ -18,6 +18,34 @@ export class ChaserComp {
 
 export class ChaserSys extends Sys {
   /** @type {import('public/js/ecs/core/sys.js').SysAction} */
+  start = ({ entMger, evtBus }) => {
+    evtBus.on(
+      'apply_hazard',
+      /** @type {import('../../systems/hazardSys.js').HazardEventListener} */
+      ({ ent1, ent2 }) => {
+        const chaser =
+          entMger.getComp_t(ent1, ChaserComp) ||
+          entMger.getComp_t(ent2, ChaserComp);
+
+        if (chaser) this.#applyCooldown(chaser);
+      },
+    );
+  };
+
+  /**
+   * @param {ChaserComp} chaser
+   */
+  #applyCooldown(chaser) {
+    if (chaser.onCooldown) return;
+
+    chaser.onCooldown = true;
+    chaser.cooldownTimeout = setTimeout(() => {
+      chaser.onCooldown = false;
+      chaser.cooldownTimeout = null;
+    }, 1000);
+  }
+
+  /** @type {import('public/js/ecs/core/sys.js').SysAction} */
   update = ({ entMger }) => {
     const player_ent = entMger.getEntsWithComp_t(PlayerComp).next().value;
     if (player_ent == null) return;
@@ -25,20 +53,20 @@ export class ChaserSys extends Sys {
     const player_t2d = entMger.getComp_t(player_ent, Transform2d);
     const player_col = entMger.getComp_t(player_ent, Polygon2dCollider);
     if (!player_t2d || !player_col) return;
+
     for (const ent of entMger.getEntsWithComp_t(ChaserComp)) {
       const chaser = entMger.getComp_t(ent, ChaserComp);
       const t2d = entMger.getComp_t(ent, Transform2d);
       const mv = entMger.getComp_t(ent, MovementComp);
       const col = entMger.getComp_t(ent, Polygon2dCollider);
-      if (!chaser || !t2d || !mv || !col || chaser.onCooldown) continue;
+      if (!chaser || !t2d || !mv || !col) continue;
 
-      if (player_t2d.pos.cpy().sub(t2d.pos).sqrMag() <= 35 * 35) {
+      if (
+        chaser.onCooldown ||
+        player_t2d.pos.cpy().sub(t2d.pos).sqrMag() <= 35 * 35
+      ) {
         mv.targetDir = Vector2d.zero;
-        chaser.onCooldown = true;
-        chaser.cooldownTimeout = setTimeout(() => {
-          chaser.onCooldown = false;
-          chaser.cooldownTimeout = null;
-        }, 1000);
+        this.#applyCooldown(chaser);
         continue;
       }
 
