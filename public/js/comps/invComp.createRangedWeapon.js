@@ -72,7 +72,7 @@ function createProjectile(entMger, dir, spd, [t2d, sprite, poly2dCol, hazard]) {
     new MovementComp({
       targetDir: dir,
       spd: spd,
-      targetRot: 0,
+      targetRot: t2d.rot,
     }),
     new OutOfBoundsComp(Math.max(sprite.width, sprite.height) * 1.1),
   );
