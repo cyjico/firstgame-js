@@ -9,21 +9,19 @@ import {
 } from './polygon2dCollision.util.js';
 
 /**
+ * @param {number} prevState
  * @param {boolean} isColliding
- * @param {Polygon2dCollider} collider
  */
-function updtColState(isColliding, collider) {
+function getNewState(prevState, isColliding) {
   if (isColliding) {
-    collider.curColState =
-      collider.prevColState & CollisionState.NONE
-        ? CollisionState.ENTER
-        : CollisionState.STAY;
-  } else {
-    collider.curColState =
-      collider.prevColState & CollisionState.STAY
-        ? CollisionState.EXIT
-        : CollisionState.NONE;
+    return prevState & CollisionState.NONE
+      ? CollisionState.ENTER
+      : CollisionState.STAY;
   }
+
+  return prevState & CollisionState.STAY
+    ? CollisionState.EXIT
+    : CollisionState.NONE;
 }
 
 export default class Polygon2dCollision extends Sys {
@@ -62,21 +60,16 @@ export default class Polygon2dCollision extends Sys {
 
     const ents = entMger.getEntsWithComp_t(Polygon2dCollider);
     for (const ent1 of ents) {
-      const c1 = entMger.getComp_t(ent1, Polygon2dCollider);
-      if (!c1) continue;
+      const col1 = entMger.getComp_t(ent1, Polygon2dCollider);
+      if (!col1) continue;
 
       const t1 = entMger.getComp_t(ent1, Transform2d);
       if (!t1) continue;
 
       if (!fcache.rst.has(ent1)) {
         fcache.rst.add(ent1);
-        c1.prevColState = c1.curColState;
-        c1.curColInfo = {
-          mtv: null,
-          self: null,
-          other: null,
-        };
-        updtColState(false, c1);
+        col1.prevState = col1.curState;
+        col1.curState = CollisionState.NONE;
       }
 
       const nearbyEnts = entMger.getEntsWithComp_t(Polygon2dCollider);
@@ -89,49 +82,45 @@ export default class Polygon2dCollision extends Sys {
         )
           continue;
 
-        const c2 = entMger.getComp_t(ent2, Polygon2dCollider);
+        const col2 = entMger.getComp_t(ent2, Polygon2dCollider);
         const t2 = entMger.getComp_t(ent2, Transform2d);
-        if (!c2 || !t2) continue;
+        if (!col2 || !t2) continue;
 
         // Save as having been calculated already.
         if (!fcache.col.has(ent1)) fcache.col.set(ent1, new Set());
         fcache.col.get(ent1)?.add(ent2);
 
         if (
-          (c1.rules.mask & c2.rules.layer) === 0 &&
-          (c2.rules.mask & c1.rules.layer) === 0
+          (col1.rules.mask & col2.rules.layer) === 0 &&
+          (col2.rules.mask & col1.rules.layer) === 0
         )
           continue;
 
-        if (!testBoundsBounds(c1.calcAabb(t1), c2.calcAabb(t2))) continue;
+        if (!testBoundsBounds(col1.calcAabb(t1), col2.calcAabb(t2))) continue;
 
-        const tc1 = c1.calcTransformed(t1);
-        const tc2 = c2.calcTransformed(t2);
+        const tc1 = col1.calcTransformed(t1);
+        const tc2 = col2.calcTransformed(t2);
 
         const mtv = calcMinTranslationVec(tc1, tc2);
         if (mtv) {
-          updtColState(true, c1);
+          col1.curState = getNewState(col1.prevState, true);
+
+          col1.curInfo.self = ent1;
+          col1.curInfo.other = ent2;
 
           if (!fcache.rst.has(ent2)) {
             fcache.rst.add(ent2);
-            c2.prevColState = c2.curColState;
-            c2.curColInfo = {
-              mtv: null,
-              self: null,
-              other: null,
-            };
-            updtColState(true, c2);
+            col2.prevState = col2.curState;
           }
 
-          c1.curColInfo.self = ent1;
-          c1.curColInfo.other = ent2;
+          col2.curState = getNewState(col1.prevState, true);
 
-          c2.curColInfo.self = ent2;
-          c2.curColInfo.other = ent1;
+          col2.curInfo.self = ent2;
+          col2.curInfo.other = ent1;
 
-          if (this.isResolver && !c1.rules.phantom && !c2.rules.phantom) {
-            c1.curColInfo.mtv = mtv;
-            c2.curColInfo.mtv = mtv.neg();
+          if (this.isResolver && !col1.rules.phantom && !col2.rules.phantom) {
+            col1.curInfo.mtv = mtv;
+            col2.curInfo.mtv = mtv.neg();
 
             const mtvHalf = mtv.cpy().mul(0.5);
             t1.pos.add(mtvHalf);
