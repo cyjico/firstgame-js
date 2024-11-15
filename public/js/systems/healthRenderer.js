@@ -8,9 +8,9 @@ export default class HealthRenderer extends RendererSlave {
    */
   update = (ctx2d, { entMger }) => {
     for (const ent of entMger.getEntsWithComp_t(HealthComp)) {
-      const hcomp = entMger.getComp_t(ent, HealthComp);
+      const health = entMger.getComp_t(ent, HealthComp);
       const t2d = entMger.getComp_t(ent, Transform2d);
-      if (!hcomp || !t2d) return;
+      if (!health || !t2d) return;
 
       ctx2d.fillStyle = 'black';
       ctx2d.fillRect(t2d.pos.x - 20, t2d.pos.y + 20, 40, 3);
@@ -19,7 +19,7 @@ export default class HealthRenderer extends RendererSlave {
       ctx2d.fillRect(
         t2d.pos.x - 20,
         t2d.pos.y + 20,
-        (hcomp.curHp / hcomp.maxHp) * 40,
+        (health.curHp / health.maxHp) * 40,
         3,
       );
     }
