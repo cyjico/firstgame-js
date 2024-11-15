@@ -1,5 +1,6 @@
 'use strict';
 
+import { ChaserSys } from './arche/enemy/chaser.js';
 import { PlayerSys, createPlayer } from './arche/player.js';
 import GameLoop from './ecs/gameLoop.js';
 import Polygon2dCollision from './ecs/systems/polygon2dCollision.js';
@@ -35,6 +36,7 @@ const GAME_LOOP = (() => {
   gameLoop.setSystems([
     new OutOfBoundsSys(CANVAS),
     new PlayerSys(),
+    new ChaserSys(),
     new MovementSys(),
     new HazardSys(),
     new Polygon2dCollision(true),
