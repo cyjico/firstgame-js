@@ -14,11 +14,11 @@ export class ChaserComp {
   /**
    * @param {Object} [opts]
    * @param {number} [opts.sqrRadius]
-   * @param {number} [opts.cooldownMs]
+   * @param {number} [opts.damagedMs]
    */
-  constructor({ sqrRadius = 35 * 35, cooldownMs = 500 } = {}) {
+  constructor({ sqrRadius = 35 * 35, damagedMs = 500 } = {}) {
     this.sqrRadius = sqrRadius;
-    this.cooldownMs = cooldownMs;
+    this.damagedMs = damagedMs;
 
     this.bias = Math.random();
   }
@@ -51,7 +51,7 @@ export class ChaserSys extends Sys {
     chaser.wasDamaged = true;
     setTimeout(() => {
       chaser.wasDamaged = false;
-    }, chaser.cooldownMs);
+    }, chaser.damagedMs);
   }
 
   /** @type {import('js/ecs/core/sys.js').SysAction} */
