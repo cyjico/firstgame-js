@@ -6,7 +6,8 @@
     "strict": true,
     "baseUrl": "./",
     "paths": {
-      "/*": ["public/*"]
+      // NOTE: only use in JSDoc
+      "@js/*": ["public/js/*"]
     }
   },
 

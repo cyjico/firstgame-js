@@ -1,14 +1,14 @@
+import HazardComp from '../../comps/hazardComp.js';
+import HealthComp from '../../comps/healthComp.js';
+import MovementComp from '../../comps/movementComp.js';
+import { CollisionLayer } from '../../constants.js';
+import PolygonCollider from '../../ecs/comps/polygonCollider.js';
+import Sprite from '../../ecs/comps/sprite.js';
+import Transform from '../../ecs/comps/transform.js';
+import Sys from '../../ecs/core/sys.js';
+import Vector2d from '../../ecs/util/vector2d.js';
+import loadImage from '../../util/loadImage.js';
 import { PlayerComp } from '../player.js';
-import HazardComp from '/js/comps/hazardComp.js';
-import HealthComp from '/js/comps/healthComp.js';
-import MovementComp from '/js/comps/movementComp.js';
-import { CollisionLayer } from '/js/constants.js';
-import PolygonCollider from '/js/ecs/comps/polygonCollider.js';
-import Sprite from '/js/ecs/comps/sprite.js';
-import Transform from '/js/ecs/comps/transform.js';
-import Sys from '/js/ecs/core/sys.js';
-import Vector2d from '/js/ecs/util/vector2d.js';
-import loadImage from '/js/util/loadImage.js';
 
 export class ChaserComp {
   /**
