@@ -19,6 +19,8 @@ export class ChaserComp {
   constructor({ sqrRadius = 35 * 35, cooldownMs = 500 } = {}) {
     this.sqrRadius = sqrRadius;
     this.cooldownMs = cooldownMs;
+
+    this.bias = Math.random();
   }
 
   isCooldown = false;
@@ -74,7 +76,7 @@ export class ChaserSys extends Sys {
       ) {
         mv.targetDir = Vector2d.perpendicular(
           player_t.pos.cpy().sub(t.pos).norm(),
-        );
+        ).mul(-1 + 2 * Math.round(chaser.bias));
         continue;
       }
 
