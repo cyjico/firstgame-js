@@ -1,15 +1,15 @@
+import HealthComp from '../comps/healthComp.js';
+import InvComp from '../comps/invComp.js';
+import RangedWeapon from '../comps/invComp.rangedWeapon.js';
+import MovementComp from '../comps/movementComp.js';
+import { CollisionLayer } from '../constants.js';
 import PolygonCollider from '../ecs/comps/polygonCollider.js';
+import Sprite from '../ecs/comps/sprite.js';
 import Transform from '../ecs/comps/transform.js';
 import Sys from '../ecs/core/sys.js';
 import inputHandler, { MOUSE_BUTTON } from '../ecs/systems/inputHandler.js';
 import Vector2d from '../ecs/util/vector2d.js';
-import MovementComp from '../comps/movementComp.js';
-import InvComp from '../comps/invComp.js';
 import loadImage from '../util/loadImage.js';
-import Sprite from '../ecs/comps/sprite.js';
-import { CollisionLayer } from '../constants.js';
-import HealthComp from '../comps/healthComp.js';
-import createRangedWeapon from '../comps/invComp.createRangedWeapon.js';
 import { createChaser } from './enemy/chaser.js';
 
 export class PlayerComp {}
@@ -18,7 +18,7 @@ export class PlayerSys extends Sys {
   /**
    * @type {import("../ecs/core/sys.js").SysAction} ginfo
    */
-  update = ({ time, entMger }) => {
+  update = ({ time, entMger, evtBus }) => {
     // DEBUGGING
     if (inputHandler.mouse.buttons.down & MOUSE_BUTTON.PRIMARY) {
       createChaser(
@@ -48,8 +48,11 @@ export class PlayerSys extends Sys {
     if (inputHandler.keys.down.has('x')) {
       const inv = entMger.getComp_t(ent, InvComp);
 
-      if (inv && inv.items[inv.curItemIdx]?.canUse(time.t, entMger, ent))
-        inv.items[inv.curItemIdx].use(time.t, entMger, ent);
+      if (
+        inv &&
+        inv.items[inv.curItemIdx]?.canUse({ t: time.t, entMger, evtBus }, ent)
+      )
+        inv.items[inv.curItemIdx].use({ t: time.t, entMger, evtBus }, ent);
     }
   };
 }
@@ -82,22 +85,26 @@ export async function createPlayer(entMger, pos) {
       targetRot: -Math.PI / 2,
     }),
     new InvComp([
-      createRangedWeapon({
-        name: 'default',
-        range: 10,
-        projSpd: 1,
-        projDmg: 25,
-        projCount: 1,
-        projSprite: new Sprite({
-          img: await loadImage(
-            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsf53D6qW-r1u5qULvvnESTXHirMs-m6ASJA&s',
-          ),
-          width: 40,
-          height: 25,
-          offrot: Math.PI,
-        }),
-        projCollider: proj_polycol,
-      }),
+      new RangedWeapon(
+        'default',
+        {
+          range: 10,
+          dmg: 25,
+        },
+        {
+          spd: 1,
+          count: 1,
+          sprite: new Sprite({
+            img: await loadImage(
+              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsf53D6qW-r1u5qULvvnESTXHirMs-m6ASJA&s',
+            ),
+            width: 40,
+            height: 25,
+            offrot: Math.PI,
+          }),
+          collider: proj_polycol,
+        },
+      ),
     ]),
   );
 }
