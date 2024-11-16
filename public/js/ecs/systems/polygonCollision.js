@@ -1,12 +1,10 @@
-import Polygon2dCollider, {
-  CollisionState,
-} from '../comps/polygon2dCollider.js';
-import Transform2d from '../comps/transform2d.js';
+import PolygonCollider, { CollisionState } from '../comps/polygonCollider.js';
+import Transform from '../comps/transform.js';
 import Sys from '../core/sys.js';
 import {
   calcMinTranslationVec,
   testBoundsBounds,
-} from './polygon2dCollision.util.js';
+} from './polygonCollision.util.js';
 
 /**
  * @typedef {(data: {
@@ -32,7 +30,7 @@ function getNewState(prevState, isColliding) {
   return CollisionState.NONE;
 }
 
-export default class Polygon2dCollision extends Sys {
+export default class PolygonCollision extends Sys {
   constructor(isResolver = false) {
     super();
 
@@ -51,21 +49,21 @@ export default class Polygon2dCollision extends Sys {
      */
     const wasCalculated = new Map();
 
-    for (const ent1 of entMger.getEntsWithComp_t(Polygon2dCollider)) {
-      const col1 = entMger.getComp_t(ent1, Polygon2dCollider);
+    for (const ent1 of entMger.getEntsWithComp_t(PolygonCollider)) {
+      const col1 = entMger.getComp_t(ent1, PolygonCollider);
       if (!col1) continue;
 
-      const t1 = entMger.getComp_t(ent1, Transform2d);
+      const t1 = entMger.getComp_t(ent1, Transform);
       if (!t1) continue;
 
-      const nearbyEnts = entMger.getEntsWithComp_t(Polygon2dCollider);
+      const nearbyEnts = entMger.getEntsWithComp_t(PolygonCollider);
       for (const ent2 of nearbyEnts) {
         if (ent1 === ent2 || wasCalculated.get(ent1)?.has(ent2)) {
           continue;
         }
 
-        const col2 = entMger.getComp_t(ent2, Polygon2dCollider);
-        const t2 = entMger.getComp_t(ent2, Transform2d);
+        const col2 = entMger.getComp_t(ent2, PolygonCollider);
+        const t2 = entMger.getComp_t(ent2, Transform);
         if (!col2 || !t2) continue;
 
         // Cache ent1 and ent2 interaction as having been calculated already.
@@ -120,10 +118,10 @@ export default class Polygon2dCollision extends Sys {
   };
 
   /**
-   * @param {Polygon2dCollider} col1
-   * @param {Transform2d} t1
-   * @param {Polygon2dCollider} col2
-   * @param {Transform2d} t2
+   * @param {PolygonCollider} col1
+   * @param {Transform} t1
+   * @param {PolygonCollider} col2
+   * @param {Transform} t2
    */
   calcCollision(col1, t1, col2, t2) {
     if (

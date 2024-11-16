@@ -3,8 +3,8 @@
 import { ChaserSys } from './arche/enemy/chaser.js';
 import { PlayerSys, createPlayer } from './arche/player.js';
 import GameLoop from './ecs/gameLoop.js';
-import Polygon2dCollision from './ecs/systems/polygon2dCollision.js';
-import Polygon2dRenderer from './ecs/systems/polygon2dRenderer.js';
+import PolygonCollision from './ecs/systems/polygonCollision.js';
+import PolygonRenderer from './ecs/systems/polygonRenderer.js';
 import RendererMaster from './ecs/systems/rendererMaster.js';
 import SpriteRenderer from './ecs/systems/spriteRenderer.js';
 import DestroyOnImpactSys from './systems/destroyOnImpactSys.js';
@@ -38,13 +38,13 @@ const GAME_LOOP = (() => {
     new PlayerSys(),
     new ChaserSys(),
     new MovementSys(),
-    new Polygon2dCollision(true),
+    new PolygonCollision(true),
     new HazardSys(),
     new RendererMaster(
       CTX2D,
       new HealthRenderer(),
       new SpriteRenderer(),
-      new Polygon2dRenderer(),
+      new PolygonRenderer(),
     ),
     new DestroyOnOutOfBoundsSys(CANVAS),
     new DestroyOnImpactSys(),

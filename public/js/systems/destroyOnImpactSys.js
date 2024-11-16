@@ -8,7 +8,7 @@ export default class DestroyOnImpactSys extends Sys {
   start = ({ evtBus, entMger }) => {
     evtBus.on(
       'collision_enter',
-      /** @type {import('../ecs/systems/polygon2dCollision.js').CollisionEventListener} */
+      /** @type {import('../ecs/systems/polygonCollision.js').CollisionEventListener} */
       ({ ent1, ent2 }) => {
         this.#applyDestroyOnImpact(entMger, ent1);
         this.#applyDestroyOnImpact(entMger, ent2);

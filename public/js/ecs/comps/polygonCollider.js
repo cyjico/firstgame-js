@@ -1,4 +1,4 @@
-import Polygon2d from './polygon2d.js';
+import Polygon from './polygon.js';
 
 /**
  * Example:
@@ -39,17 +39,17 @@ export const CollisionState = {
  * @prop {number} state
  */
 
-export default class Polygon2dCollider extends Polygon2d {
+export default class PolygonCollider extends Polygon {
   /**
    * @type {Map<number, CollisionInfo>}
    */
   #infos = new Map();
 
   /**
-   * @param {import("./polygon2d.js").Vertex[]} verts
+   * @param {import("./polygon.js").Vertex[]} verts
    * @param {Object} [opts] Skips procssing and assigns the properties directly.
-   * @param {import('./polygon2d.js').Edge[]} [opts.edges] Edges of the vertices.
-   * @param {import('./polygon2d.js').Bounds2d} [opts.oobb] Object-oriented bounds of the vertices.
+   * @param {import('./polygon.js').Edge[]} [opts.edges] Edges of the vertices.
+   * @param {import('./polygon.js').Bounds} [opts.oobb] Object-oriented bounds of the vertices.
    * @param {number} [opts.layer] Collision layer. It defaults to 1.
    * @param {number} [opts.mask] Collision mask. It defaults to 1.
    * @param {boolean} [opts.phantom] Doesn't register a physical reaction with other colliders.
@@ -109,8 +109,8 @@ export default class Polygon2dCollider extends Polygon2d {
    * @param {boolean} [forceClockwise=true]
    */
   static fromArray(verts, forceClockwise = true) {
-    const x = Polygon2d.fromArray(verts, forceClockwise);
-    return new Polygon2dCollider(x.verts, {
+    const x = Polygon.fromArray(verts, forceClockwise);
+    return new PolygonCollider(x.verts, {
       edges: x.edges,
       oobb: x.oobb,
     });
@@ -123,8 +123,8 @@ export default class Polygon2dCollider extends Polygon2d {
    * @param {number} height
    */
   static fromRect(width, height) {
-    const x = Polygon2d.fromRect(width, height);
-    return new Polygon2dCollider(x.verts, {
+    const x = Polygon.fromRect(width, height);
+    return new PolygonCollider(x.verts, {
       edges: x.edges,
       oobb: x.oobb,
     });

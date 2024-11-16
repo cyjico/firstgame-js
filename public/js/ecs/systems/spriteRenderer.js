@@ -1,5 +1,5 @@
 import Sprite from '../comps/sprite.js';
-import Transform2d from '../comps/transform2d.js';
+import Transform from '../comps/transform.js';
 import { RendererSlave } from './rendererMaster.js';
 
 export default class SpriteRenderer extends RendererSlave {
@@ -20,11 +20,11 @@ export default class SpriteRenderer extends RendererSlave {
     for (const ent of ents) {
       const spr = /** @type {Sprite} */ (entMger.getComp_t(ent, Sprite));
 
-      const t = entMger.getComp_t(ent, Transform2d);
+      const t = entMger.getComp_t(ent, Transform);
       if (!t || !spr.img) continue;
 
       ctx2d.save();
-      
+
       const tmat = t.getLocalToWorldMatrix();
       ctx2d.transform(
         tmat.m00,
@@ -34,7 +34,7 @@ export default class SpriteRenderer extends RendererSlave {
         tmat.m02,
         tmat.m12,
       );
-      
+
       const sprmat = spr.getOffsetTransformationMatrix();
       ctx2d.transform(
         sprmat.m00,

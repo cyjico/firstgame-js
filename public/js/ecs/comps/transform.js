@@ -2,7 +2,7 @@ import { wrap } from '../util/mathplus.js';
 import Matrix3x3 from '../util/matrix3x3.js';
 import Vector2d from '../util/vector2d.js';
 
-export default class Transform2d {
+export default class Transform {
   /**
    * Rotation in radians.
    *

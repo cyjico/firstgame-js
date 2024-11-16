@@ -1,4 +1,3 @@
-
 /**
  * Calculates the area of a polygon.
  * Based on the sign of the calculated area, it is either counter-clockwse (<= 0) or clockwise (> 0).

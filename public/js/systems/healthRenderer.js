@@ -1,5 +1,5 @@
 import HealthComp from '../comps/healthComp.js';
-import Transform2d from '../ecs/comps/transform2d.js';
+import Transform from '../ecs/comps/transform.js';
 import { RendererSlave } from '../ecs/systems/rendererMaster.js';
 
 export default class HealthRenderer extends RendererSlave {
@@ -9,16 +9,16 @@ export default class HealthRenderer extends RendererSlave {
   update = (ctx2d, { entMger }) => {
     for (const ent of entMger.getEntsWithComp_t(HealthComp)) {
       const health = entMger.getComp_t(ent, HealthComp);
-      const t2d = entMger.getComp_t(ent, Transform2d);
-      if (!health || !t2d) return;
+      const t = entMger.getComp_t(ent, Transform);
+      if (!health || !t) return;
 
       ctx2d.fillStyle = 'black';
-      ctx2d.fillRect(t2d.pos.x - 20, t2d.pos.y + 20, 40, 3);
+      ctx2d.fillRect(t.pos.x - 20, t.pos.y + 20, 40, 3);
 
       ctx2d.fillStyle = 'red';
       ctx2d.fillRect(
-        t2d.pos.x - 20,
-        t2d.pos.y + 20,
+        t.pos.x - 20,
+        t.pos.y + 20,
         (health.curHp / health.maxHp) * 40,
         3,
       );

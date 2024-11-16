@@ -10,7 +10,7 @@
  * @property {string|CanvasGradient|CanvasPattern} [strokeStyle]
  */
 
-export default class Polygon2dMaterial {
+export default class PolygonMaterial {
   /**
    * @param {MaterialConfig} [config]
    */
