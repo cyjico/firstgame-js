@@ -1,3 +1,5 @@
+import { wrap } from '../ecs/util/mathplus.js';
+
 export default class InvComp {
   /**
    * @param {InvComp_Item[]} items
@@ -5,6 +7,11 @@ export default class InvComp {
   constructor(items) {
     this.items = items;
     this.curItemIdx = 0;
+  }
+
+  getNextItem() {
+    this.curItemIdx = wrap(this.curItemIdx + 1, 0, this.items.length);
+    return this.items[this.curItemIdx];
   }
 }
 
@@ -34,23 +41,21 @@ export class InvComp_Item {
 }
 
 /**
+ * @template T
  * @typedef {(
  *   info: {
- *     t: number,
+ *     relT: number,
+ *     relDt: number,
  *     entMger: import('../ecs/core/entMger.js').default,
  *     evtBus: import('../ecs/evtBus.js').default,
+ *     ent: number,
+ *     sqrDir: import('../ecs/util/vector2d.js').default
  *   },
- *   ent: number
- * ) => boolean} InvComp_Item_CanUseAction
+ * ) => T} InvComp_Item_Action
  */
 
 /**
- * @typedef {(
- *   info: {
- *     t: number,
- *     entMger: import('../ecs/core/entMger.js').default,
- *     evtBus: import('../ecs/evtBus.js').default,
- *   },
- *   ent: number
- * ) => void} InvComp_Item_UseAction
+ * @typedef {InvComp_Item_Action<boolean>} InvComp_Item_CanUseAction
+ *
+ * @typedef {InvComp_Item_Action<void>} InvComp_Item_UseAction
  */

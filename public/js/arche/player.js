@@ -1,3 +1,4 @@
+import HazardComp from '../comps/hazardComp.js';
 import HealthComp from '../comps/healthComp.js';
 import InvComp from '../comps/invComp.js';
 import RangedWeapon from '../comps/invComp.rangedWeapon.js';
@@ -10,7 +11,7 @@ import Sys from '../ecs/core/sys.js';
 import inputHandler, { MOUSE_BUTTON } from '../ecs/systems/inputHandler.js';
 import Vector2d from '../ecs/util/vector2d.js';
 import loadImage from '../util/loadImage.js';
-import { createChaser } from './enemy/chaser.js';
+import { createShooter } from './enemy/shooter.js';
 
 export class PlayerComp {}
 
@@ -21,7 +22,7 @@ export class PlayerSys extends Sys {
   update = ({ time, entMger, evtBus }) => {
     // DEBUGGING
     if (inputHandler.mouse.buttons.down & MOUSE_BUTTON.PRIMARY) {
-      createChaser(
+      createShooter(
         entMger,
         [inputHandler.mouse.pos.x, inputHandler.mouse.pos.y],
         -Math.PI + Math.random() * Math.PI * 2,
@@ -48,14 +49,24 @@ export class PlayerSys extends Sys {
     if (inputHandler.keys.down.has('x')) {
       const inv = entMger.getComp_t(ent, InvComp);
 
-      if (
-        inv &&
-        inv.items[inv.curItemIdx]?.canUse({ t: time.t, entMger, evtBus }, ent)
-      )
-        inv.items[inv.curItemIdx].use({ t: time.t, entMger, evtBus }, ent);
+      if (inv) {
+        const inv_info = {
+          relT: time.t,
+          relDt: time.dt,
+          entMger,
+          evtBus,
+          ent,
+          sqrDir: inputHandler.mouse.pos.cpy().sub(t.pos),
+        };
+
+        if (inv.items[inv.curItemIdx]?.canUse(inv_info))
+          inv.items[inv.curItemIdx].use(inv_info);
+      }
     }
   };
 }
+
+const PROJ_HAZARD = new HazardComp(25);
 
 /**
  * @param {import('../ecs/core/entMger.js').default} entMger
@@ -88,12 +99,13 @@ export async function createPlayer(entMger, pos) {
       new RangedWeapon(
         'default',
         {
-          range: 10,
-          dmg: 25,
+          sqrRange: Number.POSITIVE_INFINITY,
+          cooldownMs: 0,
         },
         {
           spd: 1,
           count: 1,
+          hazard: PROJ_HAZARD,
           sprite: new Sprite({
             img: await loadImage(
               'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsf53D6qW-r1u5qULvvnESTXHirMs-m6ASJA&s',

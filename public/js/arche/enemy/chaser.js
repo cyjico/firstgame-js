@@ -14,14 +14,16 @@ export class ChaserComp {
   /**
    * @param {Object} [opts]
    * @param {number} [opts.sqrRadius]
-   * @param {number} [opts.cooldownMs]
+   * @param {number} [opts.damagedMs]
    */
-  constructor({ sqrRadius = 35 * 35, cooldownMs = 500 } = {}) {
+  constructor({ sqrRadius = 35 * 35, damagedMs = 500 } = {}) {
     this.sqrRadius = sqrRadius;
-    this.cooldownMs = cooldownMs;
+    this.damagedMs = damagedMs;
+
+    this.bias = Math.random();
   }
 
-  isCooldown = false;
+  wasDamaged = false;
 }
 
 export class ChaserSys extends Sys {
@@ -35,7 +37,7 @@ export class ChaserSys extends Sys {
           entMger.getComp_t(ent1, ChaserComp) ||
           entMger.getComp_t(ent2, ChaserComp);
 
-        if (chaser) this.#applyCooldown(chaser);
+        if (chaser) this.#applyDamagedTimeout(chaser);
       },
     );
   };
@@ -43,13 +45,13 @@ export class ChaserSys extends Sys {
   /**
    * @param {ChaserComp} chaser
    */
-  #applyCooldown(chaser) {
-    if (chaser.isCooldown) return;
+  #applyDamagedTimeout(chaser) {
+    if (chaser.wasDamaged) return;
 
-    chaser.isCooldown = true;
+    chaser.wasDamaged = true;
     setTimeout(() => {
-      chaser.isCooldown = false;
-    }, chaser.cooldownMs);
+      chaser.wasDamaged = false;
+    }, chaser.damagedMs);
   }
 
   /** @type {import('js/ecs/core/sys.js').SysAction} */
@@ -58,25 +60,26 @@ export class ChaserSys extends Sys {
     if (player_ent == null) return;
 
     const player_t = entMger.getComp_t(player_ent, Transform);
-    const player_col = entMger.getComp_t(player_ent, PolygonCollider);
-    if (!player_t || !player_col) return;
+    if (!player_t) return;
 
     for (const ent of entMger.getEntsWithComp_t(ChaserComp)) {
       const chaser = entMger.getComp_t(ent, ChaserComp);
       const t = entMger.getComp_t(ent, Transform);
       const mv = entMger.getComp_t(ent, MovementComp);
-      const col = entMger.getComp_t(ent, PolygonCollider);
-      if (!chaser || !t || !mv || !col) continue;
+      if (!chaser || !t || !mv) continue;
 
-      if (
-        chaser.isCooldown ||
-        player_t.pos.cpy().sub(t.pos).sqrMag() <= chaser.sqrRadius
-      ) {
-        mv.targetDir = Vector2d.zero;
-        continue;
+      if (chaser.wasDamaged) {
+        mv.targetDir = Vector2d.perpendicular(
+          player_t.pos.cpy().sub(t.pos).norm().neg(),
+        ).mul(-1 + 2 * Math.round(chaser.bias));
+      } else if (player_t.pos.cpy().sub(t.pos).sqrMag() <= chaser.sqrRadius) {
+        mv.targetDir = Vector2d.perpendicular(
+          player_t.pos.cpy().sub(t.pos).norm(),
+        ).mul(-1 + 2 * Math.round(chaser.bias));
+      } else {
+        mv.targetDir = player_t.pos.cpy().sub(t.pos).norm();
       }
 
-      mv.targetDir = player_t.pos.cpy().sub(t.pos).norm();
       mv.targetRot = Math.atan2(mv.targetDir.y, mv.targetDir.x);
     }
   };
@@ -107,7 +110,7 @@ export async function createChaser(entMger, pos, rot) {
       offrot: Math.PI / 2,
     }),
     new MovementComp(),
-    new ChaserComp({}),
+    new ChaserComp(),
     new HazardComp(25, 'enemy', ['enemy']),
   );
 }
