@@ -8,10 +8,9 @@ import PolygonCollider from '../ecs/comps/polygonCollider.js';
 import Sprite from '../ecs/comps/sprite.js';
 import Transform from '../ecs/comps/transform.js';
 import Sys from '../ecs/core/sys.js';
-import inputHandler, { MOUSE_BUTTON } from '../ecs/systems/inputHandler.js';
+import inputHandler from '../ecs/systems/inputHandler.js';
 import Vector2d from '../ecs/util/vector2d.js';
 import loadImage from '../util/loadImage.js';
-import { createShooter } from './enemy/shooter.js';
 
 export class PlayerComp {}
 
@@ -20,15 +19,6 @@ export class PlayerSys extends Sys {
    * @type {import("../ecs/core/sys.js").SysAction} ginfo
    */
   update = ({ time, entMger, evtBus }) => {
-    // DEBUGGING
-    if (inputHandler.mouse.buttons.down & MOUSE_BUTTON.PRIMARY) {
-      createShooter(
-        entMger,
-        [inputHandler.mouse.pos.x, inputHandler.mouse.pos.y],
-        -Math.PI + Math.random() * Math.PI * 2,
-      );
-    }
-
     const ent = entMger.getEntsWithComp_t(PlayerComp).next().value;
     if (ent == null) return;
 
