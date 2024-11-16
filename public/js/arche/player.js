@@ -47,12 +47,27 @@ export class PlayerSys extends Sys {
 
     if (inputHandler.keys.down.has('x')) {
       const inv = entMger.getComp_t(ent, InvComp);
+      if (inv) {
+        const inv_envInfo = {
+          relT: time.t,
+          relDt: time.dt,
+          entMger,
+          evtBus,
+          ent,
+        };
 
-      if (
-        inv &&
-        inv.items[inv.curItemIdx]?.canUse({ t: time.t, entMger, evtBus }, ent)
-      )
-        inv.items[inv.curItemIdx].use({ t: time.t, entMger, evtBus }, ent);
+        if (inv.items[inv.curItemIdx]?.canUse(inv_envInfo)) {
+          const dir = inputHandler.mouse.pos.cpy().sub(t.pos).normed();
+          inv.items[inv.curItemIdx].use(
+            Object.assign(
+              {
+                dir,
+              },
+              inv_envInfo,
+            ),
+          );
+        }
+      }
     }
   };
 }
@@ -90,6 +105,7 @@ export async function createPlayer(entMger, pos) {
         {
           range: 10,
           dmg: 25,
+          cooldownMs: 0,
         },
         {
           spd: 1,

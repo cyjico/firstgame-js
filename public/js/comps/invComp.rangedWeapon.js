@@ -1,5 +1,4 @@
 import Transform from '../ecs/comps/transform.js';
-import inputHandler from '../ecs/systems/inputHandler.js';
 import HazardComp from './hazardComp.js';
 import { InvComp_Item } from './invComp.js';
 import MovementComp from './movementComp.js';
@@ -12,33 +11,37 @@ export default class RangedWeapon extends InvComp_Item {
    * @param {Object} opts
    * @param {number} opts.range
    * @param {number} opts.dmg
+   * @param {number} opts.cooldownMs
    * @param {Object} projOpts
    * @param {number} projOpts.spd
    * @param {number} projOpts.count
    * @param {import('../ecs/comps/sprite.js').default} projOpts.sprite
    * @param {import('../ecs/comps/polygonCollider.js').default} projOpts.collider
    */
-  constructor(name, { range, dmg }, projOpts) {
+  constructor(name, { range, dmg, cooldownMs }, projOpts) {
     super(`RangedWeapon::${name}`);
 
     this._range = range;
     this._dmg = dmg;
+    this._cooldownMs = cooldownMs;
+
     this._proj = projOpts;
+
+    this._lastUse = 0;
   }
 
   /**
    * @type {import('./invComp.js').InvComp_Item_CanUseAction}
    */
-  canUse = () => true;
+  canUse = ({ relT }) => this._lastUse + this._cooldownMs <= relT;
 
   /**
    * @type {import('./invComp.js').InvComp_Item_UseAction}
    */
-  use = ({ entMger }, ent) => {
+  use = ({ relT, entMger, ent, dir }) => {
     const t = entMger.getComp_t(ent, Transform);
-    if (!t) return;
+    if (!dir || !t) return;
 
-    const dir = inputHandler.mouse.pos.cpy().sub(t.pos).normed();
     for (let i = 0; i < this._proj.count; i++) {
       createProjectile(entMger, dir, this._proj.spd, {
         transform: new Transform([t.pos.x, t.pos.y], Math.atan2(dir.y, dir.x)),
@@ -47,6 +50,8 @@ export default class RangedWeapon extends InvComp_Item {
         hazard: new HazardComp(this._dmg),
       });
     }
+
+    this._lastUse = relT;
   };
 }
 
@@ -60,7 +65,7 @@ export default class RangedWeapon extends InvComp_Item {
  * @param {import('../ecs/comps/polygonCollider.js').default} comps.collider
  * @param {HazardComp} comps.hazard
  */
-function createProjectile(
+export function createProjectile(
   entMger,
   dir,
   spd,
@@ -73,8 +78,8 @@ function createProjectile(
     collider,
     hazard,
     new MovementComp({
-      targetDir: dir,
       spd: spd,
+      targetDir: dir,
       targetRot: transform.rot,
     }),
     new DestroyOnOutOfBoundsComp(Math.max(sprite.width, sprite.height) * 1.1),
