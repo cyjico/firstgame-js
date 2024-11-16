@@ -49,7 +49,7 @@ export class InvComp_Item {
  *     entMger: import('../ecs/core/entMger.js').default,
  *     evtBus: import('../ecs/evtBus.js').default,
  *     ent: number,
- *     dir?: import('../ecs/util/vector2d.js').default
+ *     sqrDir: import('../ecs/util/vector2d.js').default
  *   },
  * ) => T} InvComp_Item_Action
  */
