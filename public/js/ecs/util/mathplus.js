@@ -10,6 +10,7 @@ export const RAD_TO_DEG = 180 / Math.PI;
 
 /**
  * Clamps `n` between `min` and `max` (inclusive).
+ *
  * @param {number} n
  * @param {number} min
  * @param {number} max
@@ -20,6 +21,7 @@ export function clamp(n, min, max) {
 
 /**
  * Wraps `n` between `min` (inclusive) and `max` (exclusive).
+ *
  * @param {number} n
  * @param {number} min
  * @param {number} max
@@ -44,7 +46,7 @@ export function approx(a, b, tolerance = 0.001953125) {
 }
 
 /**
- * Linear interpolation but unclamped.
+ * Linear interpolation but clamped.
  *
  * @param {number} a
  * @param {number} b
@@ -63,4 +65,30 @@ export function lerp(a, b, t) {
  */
 export function unclampedLerp(a, b, t) {
   return a + (b - a) * t;
+}
+
+/**
+ * `unclampedLerpRot()` but clamped.
+ *
+ * @param {number} a
+ * @param {number} b
+ * @param {number} t
+ * @returns {number}
+ */
+export function lerpRot(a, b, t) {
+  return unclampedLerpRot(a, b, clamp(t, 0, 1));
+}
+
+/**
+ * `unclampedLerp()` but for rotation (in radians); considers smallest path.
+ *
+ * @param {number} a
+ * @param {number} b
+ * @param {number} t
+ * @returns {number}
+ */
+export function unclampedLerpRot(a, b, t) {
+  const diff = wrap(b - a, -Math.PI, Math.PI);
+
+  return a + diff * t;
 }
