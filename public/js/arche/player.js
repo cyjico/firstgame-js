@@ -8,7 +8,7 @@ import PolygonCollider from '../ecs/comps/polygonCollider.js';
 import Sprite from '../ecs/comps/sprite.js';
 import Transform from '../ecs/comps/transform.js';
 import Sys from '../ecs/core/sys.js';
-import inputHandler from '../ecs/systems/inputHandler.js';
+import inputHandler, { MOUSE_BUTTON } from '../ecs/systems/inputHandler.js';
 import Vector2d from '../ecs/util/vector2d.js';
 import loadImage from '../util/loadImage.js';
 
@@ -36,7 +36,7 @@ export class PlayerSys extends Sys {
     if (inputHandler.isKeyPressed('d')) mov.targetRot += 0.06;
     if (inputHandler.isKeyPressed('a')) mov.targetRot -= 0.06;
 
-    if (inputHandler.keys.down.has('x')) {
+    if (inputHandler.mouse.buttons.down & MOUSE_BUTTON.PRIMARY) {
       const inv = entMger.getComp_t(ent, InvComp);
 
       if (inv) {
