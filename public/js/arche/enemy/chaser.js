@@ -70,13 +70,16 @@ export class ChaserSys extends Sys {
       const col = entMger.getComp_t(ent, PolygonCollider);
       if (!chaser || !t || !mv || !col) continue;
 
-      if (
-        chaser.isCooldown ||
-        player_t.pos.cpy().sub(t.pos).sqrMag() <= chaser.sqrRadius
-      ) {
+      if (chaser.isCooldown) {
+        mv.targetDir = Vector2d.zero;
+        continue;
+      }
+
+      if (player_t.pos.cpy().sub(t.pos).sqrMag() <= chaser.sqrRadius) {
         mv.targetDir = Vector2d.perpendicular(
           player_t.pos.cpy().sub(t.pos).norm(),
         ).mul(-1 + 2 * Math.round(chaser.bias));
+        mv.targetRot = Math.atan2(mv.targetDir.y, mv.targetDir.x);
         continue;
       }
 
