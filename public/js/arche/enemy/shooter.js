@@ -53,7 +53,7 @@ export class ShooterSys extends Sys {
   };
 }
 
-const PROJ_HAZARD = new HazardComp(10, 'enemy', ['enemy']);
+const PROJ_HAZARD = new HazardComp(15, 'enemy', ['enemy']);
 const PROJ_SPRITE = new Sprite({
   img: await loadImage(
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsf53D6qW-r1u5qULvvnESTXHirMs-m6ASJA&s',
@@ -81,7 +81,7 @@ export async function createShooter(entMger, pos, rot, cooldownMs = 700) {
 
   entMger.addComps(
     entMger.createEnt(),
-    new HealthComp(),
+    new HealthComp(25),
     polycol,
     new Transform(pos, rot),
     new Sprite({
