@@ -60,15 +60,13 @@ export class ChaserSys extends Sys {
     if (player_ent == null) return;
 
     const player_t = entMger.getComp_t(player_ent, Transform);
-    const player_col = entMger.getComp_t(player_ent, PolygonCollider);
-    if (!player_t || !player_col) return;
+    if (!player_t) return;
 
     for (const ent of entMger.getEntsWithComp_t(ChaserComp)) {
       const chaser = entMger.getComp_t(ent, ChaserComp);
       const t = entMger.getComp_t(ent, Transform);
       const mv = entMger.getComp_t(ent, MovementComp);
-      const col = entMger.getComp_t(ent, PolygonCollider);
-      if (!chaser || !t || !mv || !col) continue;
+      if (!chaser || !t || !mv) continue;
 
       if (chaser.wasDamaged) {
         mv.targetDir = Vector2d.perpendicular(
