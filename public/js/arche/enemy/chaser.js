@@ -23,7 +23,7 @@ export class ChaserComp {
     this.bias = Math.random();
   }
 
-  isCooldown = false;
+  wasDamaged = false;
 }
 
 export class ChaserSys extends Sys {
@@ -37,7 +37,7 @@ export class ChaserSys extends Sys {
           entMger.getComp_t(ent1, ChaserComp) ||
           entMger.getComp_t(ent2, ChaserComp);
 
-        if (chaser) this.#applyCooldown(chaser);
+        if (chaser) this.#applyDamagedTimeout(chaser);
       },
     );
   };
@@ -45,12 +45,12 @@ export class ChaserSys extends Sys {
   /**
    * @param {ChaserComp} chaser
    */
-  #applyCooldown(chaser) {
-    if (chaser.isCooldown) return;
+  #applyDamagedTimeout(chaser) {
+    if (chaser.wasDamaged) return;
 
-    chaser.isCooldown = true;
+    chaser.wasDamaged = true;
     setTimeout(() => {
-      chaser.isCooldown = false;
+      chaser.wasDamaged = false;
     }, chaser.cooldownMs);
   }
 
@@ -70,20 +70,18 @@ export class ChaserSys extends Sys {
       const col = entMger.getComp_t(ent, PolygonCollider);
       if (!chaser || !t || !mv || !col) continue;
 
-      if (chaser.isCooldown) {
-        mv.targetDir = Vector2d.zero;
-        continue;
-      }
-
-      if (player_t.pos.cpy().sub(t.pos).sqrMag() <= chaser.sqrRadius) {
+      if (chaser.wasDamaged) {
+        mv.targetDir = Vector2d.perpendicular(
+          player_t.pos.cpy().sub(t.pos).norm().neg(),
+        ).mul(-1 + 2 * Math.round(chaser.bias));
+      } else if (player_t.pos.cpy().sub(t.pos).sqrMag() <= chaser.sqrRadius) {
         mv.targetDir = Vector2d.perpendicular(
           player_t.pos.cpy().sub(t.pos).norm(),
         ).mul(-1 + 2 * Math.round(chaser.bias));
-        mv.targetRot = Math.atan2(mv.targetDir.y, mv.targetDir.x);
-        continue;
+      } else {
+        mv.targetDir = player_t.pos.cpy().sub(t.pos).norm();
       }
 
-      mv.targetDir = player_t.pos.cpy().sub(t.pos).norm();
       mv.targetRot = Math.atan2(mv.targetDir.y, mv.targetDir.x);
     }
   };
