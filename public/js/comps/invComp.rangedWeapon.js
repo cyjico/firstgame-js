@@ -1,6 +1,4 @@
 import Transform from '../ecs/comps/transform.js';
-import inputHandler from '../ecs/systems/inputHandler.js';
-import HazardComp from './hazardComp.js';
 import { InvComp_Item } from './invComp.js';
 import MovementComp from './movementComp.js';
 import { DestroyOnOutOfBoundsComp } from './destroyOnOutOfBoundsComp.js';
@@ -10,43 +8,51 @@ export default class RangedWeapon extends InvComp_Item {
   /**
    * @param {string} name
    * @param {Object} opts
-   * @param {number} opts.range
-   * @param {number} opts.dmg
+   * @param {number} opts.sqrRange
+   * @param {number} opts.cooldownMs
    * @param {Object} projOpts
    * @param {number} projOpts.spd
    * @param {number} projOpts.count
+   * @param {import('./hazardComp.js').default} projOpts.hazard
    * @param {import('../ecs/comps/sprite.js').default} projOpts.sprite
    * @param {import('../ecs/comps/polygonCollider.js').default} projOpts.collider
    */
-  constructor(name, { range, dmg }, projOpts) {
+  constructor(name, { sqrRange, cooldownMs }, projOpts) {
     super(`RangedWeapon::${name}`);
 
-    this._range = range;
-    this._dmg = dmg;
-    this._proj = projOpts;
+    this._sqrRange = sqrRange;
+    this._cooldownMs = cooldownMs;
+
+    this._projOpts = projOpts;
+
+    this._lastUse = 0;
   }
 
   /**
    * @type {import('./invComp.js').InvComp_Item_CanUseAction}
    */
-  canUse = () => true;
+  canUse = ({ relT, sqrDir: dirSqr }) =>
+    dirSqr.sqrMag() <= this._sqrRange &&
+    this._lastUse + this._cooldownMs <= relT;
 
   /**
    * @type {import('./invComp.js').InvComp_Item_UseAction}
    */
-  use = ({ entMger }, ent) => {
+  use = ({ relT, entMger, ent, sqrDir: dirSqr }) => {
     const t = entMger.getComp_t(ent, Transform);
     if (!t) return;
 
-    const dir = inputHandler.mouse.pos.cpy().sub(t.pos).normed();
-    for (let i = 0; i < this._proj.count; i++) {
-      createProjectile(entMger, dir, this._proj.spd, {
+    const dir = dirSqr.normed();
+    for (let i = 0; i < this._projOpts.count; i++) {
+      createProjectile(entMger, dir, this._projOpts.spd, {
         transform: new Transform([t.pos.x, t.pos.y], Math.atan2(dir.y, dir.x)),
-        sprite: this._proj.sprite,
-        collider: this._proj.collider,
-        hazard: new HazardComp(this._dmg),
+        hazard: this._projOpts.hazard,
+        sprite: this._projOpts.sprite,
+        collider: this._projOpts.collider,
       });
     }
+
+    this._lastUse = relT;
   };
 }
 
@@ -58,9 +64,9 @@ export default class RangedWeapon extends InvComp_Item {
  * @param {Transform} comps.transform
  * @param {import('../ecs/comps/sprite.js').default} comps.sprite
  * @param {import('../ecs/comps/polygonCollider.js').default} comps.collider
- * @param {HazardComp} comps.hazard
+ * @param {import('./hazardComp.js').default} comps.hazard
  */
-function createProjectile(
+export function createProjectile(
   entMger,
   dir,
   spd,
@@ -73,8 +79,8 @@ function createProjectile(
     collider,
     hazard,
     new MovementComp({
-      targetDir: dir,
       spd: spd,
+      targetDir: dir,
       targetRot: transform.rot,
     }),
     new DestroyOnOutOfBoundsComp(Math.max(sprite.width, sprite.height) * 1.1),

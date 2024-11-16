@@ -72,6 +72,12 @@ export default class PolygonCollision extends Sys {
         if (!wasCalculated.get(ent2)?.add(ent1))
           wasCalculated.set(ent2, new Set([ent1]));
 
+        if (
+          (col1.rules.layer & col2.rules.mask) === 0 ||
+          (col2.rules.layer & col1.rules.mask) === 0
+        )
+          continue;
+
         const mtv = this.calcCollision(col1, t1, col2, t2);
 
         if (!mtv) {
