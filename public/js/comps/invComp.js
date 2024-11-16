@@ -1,3 +1,5 @@
+import { wrap } from '../ecs/util/mathplus.js';
+
 export default class InvComp {
   /**
    * @param {InvComp_Item[]} items
@@ -5,6 +7,11 @@ export default class InvComp {
   constructor(items) {
     this.items = items;
     this.curItemIdx = 0;
+  }
+
+  getNextItem() {
+    this.curItemIdx = wrap(this.curItemIdx + 1, 0, this.items.length);
+    return this.items[this.curItemIdx];
   }
 }
 
