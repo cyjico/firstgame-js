@@ -1,12 +1,14 @@
 'use strict';
 
+import { ChaserSys } from './arche/enemy/chaser.js';
 import { PlayerSys, createPlayer } from './arche/player.js';
 import GameLoop from './ecs/gameLoop.js';
 import Polygon2dCollision from './ecs/systems/polygon2dCollision.js';
 import Polygon2dRenderer from './ecs/systems/polygon2dRenderer.js';
 import RendererMaster from './ecs/systems/rendererMaster.js';
 import SpriteRenderer from './ecs/systems/spriteRenderer.js';
-import OutOfBoundsSys from './systems/boundaryCheckSys.js';
+import DestroyOnImpactSys from './systems/destroyOnImpactSys.js';
+import DestroyOnOutOfBoundsSys from './systems/destroyOnOutOfBoundsSys.js';
 import HazardSys from './systems/hazardSys.js';
 import HealthRenderer from './systems/healthRenderer.js';
 import MovementSys from './systems/movementSys.js';
@@ -33,17 +35,19 @@ const GAME_LOOP = (() => {
   createPlayer(gameLoop.entMger, [CANVAS.width / 2, CANVAS.height / 2]);
 
   gameLoop.setSystems([
-    new OutOfBoundsSys(CANVAS),
     new PlayerSys(),
+    new ChaserSys(),
     new MovementSys(),
-    new HazardSys(),
     new Polygon2dCollision(true),
+    new HazardSys(),
     new RendererMaster(
       CTX2D,
       new HealthRenderer(),
       new SpriteRenderer(),
       new Polygon2dRenderer(),
     ),
+    new DestroyOnOutOfBoundsSys(CANVAS),
+    new DestroyOnImpactSys(),
   ]);
 
   return gameLoop;

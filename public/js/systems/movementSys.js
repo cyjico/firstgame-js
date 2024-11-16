@@ -1,7 +1,7 @@
 import MovementComp from '../comps/movementComp.js';
 import Transform2d from '../ecs/comps/transform2d.js';
 import Sys from '../ecs/core/sys.js';
-import { lerp } from '../ecs/util/mathplus.js';
+import { lerpRot, wrap } from '../ecs/util/mathplus.js';
 import Vector2d from '../ecs/util/vector2d.js';
 
 export default class MovementSys extends Sys {
@@ -14,21 +14,21 @@ export default class MovementSys extends Sys {
       const t2d = entMger.getComp_t(ent, Transform2d);
       if (!movComp || !t2d) return;
 
-      movComp.dir = Vector2d.lerp(
-        movComp.dir,
+      movComp.__dirDelta__ = Vector2d.lerp(
+        movComp.__dirDelta__,
         movComp.targetDir,
         movComp.smoothness * time.fixedDt,
       );
 
-      t2d.pos.add(movComp.dir.cpy().mul(movComp.spd * time.fixedDt));
+      t2d.pos.add(movComp.__dirDelta__.cpy().mul(movComp.spd * time.fixedDt));
 
-      movComp.rot = lerp(
-        movComp.rot,
-        movComp.targetRot,
+      movComp.__rotDelta__ = lerpRot(
+        movComp.__rotDelta__,
+        wrap(movComp.targetRot - t2d.rot, -Math.PI, Math.PI),
         movComp.rotSmoothness * time.fixedDt,
       );
 
-      t2d.rot += movComp.rot * movComp.rotSpeed * time.fixedDt;
+      t2d.rot += movComp.__rotDelta__ * movComp.rotSpeed * time.fixedDt;
     }
   };
 }

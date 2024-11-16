@@ -28,7 +28,7 @@ export default class Transform2d {
   }
 
   set rot(value) {
-    this._rot = wrap(value, 0, Math.PI * 2);
+    this._rot = wrap(value, -Math.PI, Math.PI);
   }
 
   /**
