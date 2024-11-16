@@ -34,23 +34,21 @@ export class InvComp_Item {
 }
 
 /**
+ * @template T
  * @typedef {(
  *   info: {
- *     t: number,
+ *     relT: number,
+ *     relDt: number,
  *     entMger: import('../ecs/core/entMger.js').default,
  *     evtBus: import('../ecs/evtBus.js').default,
+ *     ent: number,
+ *     dir?: import('../ecs/util/vector2d.js').default
  *   },
- *   ent: number
- * ) => boolean} InvComp_Item_CanUseAction
+ * ) => T} InvComp_Item_Action
  */
 
 /**
- * @typedef {(
- *   info: {
- *     t: number,
- *     entMger: import('../ecs/core/entMger.js').default,
- *     evtBus: import('../ecs/evtBus.js').default,
- *   },
- *   ent: number
- * ) => void} InvComp_Item_UseAction
+ * @typedef {InvComp_Item_Action<boolean>} InvComp_Item_CanUseAction
+ *
+ * @typedef {InvComp_Item_Action<void>} InvComp_Item_UseAction
  */
