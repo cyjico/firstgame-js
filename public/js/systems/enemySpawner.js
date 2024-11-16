@@ -32,8 +32,8 @@ export default class EnemySpawner extends Sys {
       Math.random() * this.#canvas.height,
     ];
 
-    const seed = Math.round(3 * Math.random());
-    if (seed <= 2) createChaser(entMger, pos, 0);
+    const seed = Math.round(Math.random());
+    if (seed <= 0) createChaser(entMger, pos, 0);
     else createShooter(entMger, pos, 0);
 
     this.#timeSinceLastSpawn = time.t;
