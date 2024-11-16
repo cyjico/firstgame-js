@@ -1,5 +1,6 @@
 import { createChaser } from '../arche/enemy/chaser.js';
 import { createShooter } from '../arche/enemy/shooter.js';
+import { PlayerComp } from '../arche/player.js';
 import Sys from '../ecs/core/sys.js';
 
 export default class EnemySpawner extends Sys {
@@ -22,7 +23,8 @@ export default class EnemySpawner extends Sys {
 
   /** @type {import("../ecs/core/sys.js").SysAction} */
   update = ({ time, entMger }) => {
-    if (this.#timeSinceLastSpawn + 1000 > time.t) return;
+    const player_ent = entMger.getEntsWithComp_t(PlayerComp).next().value;
+    if (player_ent == null || this.#timeSinceLastSpawn + 1000 > time.t) return;
 
     /** @type {[number, number]} */
     const pos = [
