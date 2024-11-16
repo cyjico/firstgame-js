@@ -10,6 +10,7 @@ import RendererMaster from './ecs/systems/rendererMaster.js';
 import SpriteRenderer from './ecs/systems/spriteRenderer.js';
 import DestroyOnImpactSys from './systems/destroyOnImpactSys.js';
 import DestroyOnOutOfBoundsSys from './systems/destroyOnOutOfBoundsSys.js';
+import EnemySpawner from './systems/enemySpawner.js';
 import HazardSys from './systems/hazardSys.js';
 import HealthRenderer from './systems/healthRenderer.js';
 import MovementSys from './systems/movementSys.js';
@@ -36,6 +37,7 @@ const GAME_LOOP = (() => {
   createPlayer(gameLoop.entMger, [CANVAS.width / 2, CANVAS.height / 2]);
 
   gameLoop.setSystems([
+    new EnemySpawner(CANVAS),
     new PlayerSys(),
     new ChaserSys(),
     new ShooterSys(),
