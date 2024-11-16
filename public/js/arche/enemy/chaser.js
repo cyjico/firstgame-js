@@ -72,7 +72,9 @@ export class ChaserSys extends Sys {
         chaser.isCooldown ||
         player_t.pos.cpy().sub(t.pos).sqrMag() <= chaser.sqrRadius
       ) {
-        mv.targetDir = Vector2d.zero;
+        mv.targetDir = Vector2d.perpendicular(
+          player_t.pos.cpy().sub(t.pos).norm(),
+        );
         continue;
       }
 
@@ -107,7 +109,7 @@ export async function createChaser(entMger, pos, rot) {
       offrot: Math.PI / 2,
     }),
     new MovementComp(),
-    new ChaserComp({}),
+    new ChaserComp(),
     new HazardComp(25, 'enemy', ['enemy']),
   );
 }
