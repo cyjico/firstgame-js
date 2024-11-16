@@ -98,7 +98,7 @@ export async function createChaser(entMger, pos, rot) {
 
   entMger.addComps(
     entMger.createEnt(),
-    new HealthComp(),
+    new HealthComp(50),
     polycol,
     new Transform(pos, rot),
     new Sprite({
