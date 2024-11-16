@@ -1,9 +1,9 @@
-import Polygon2d from '../comps/polygon2d.js';
-import Polygon2dMaterial from '../comps/polygon2dMaterial.js';
-import Transform2d from '../comps/transform2d.js';
+import Polygon from '../comps/polygon.js';
+import PolygonMaterial from '../comps/polygonMaterial.js';
+import Transform from '../comps/transform.js';
 import { RendererSlave } from './rendererMaster.js';
 
-export default class Polygon2dRenderer extends RendererSlave {
+export default class PolygonRenderer extends RendererSlave {
   constructor() {
     super();
   }
@@ -12,20 +12,18 @@ export default class Polygon2dRenderer extends RendererSlave {
    * @type {import('./rendererMaster.js').RendererSlaveAction}
    */
   update = (ctx2d, { entMger }) => {
-    const ents = entMger.getEntsWithComp_t(Polygon2d);
+    const ents = entMger.getEntsWithComp_t(Polygon);
     for (const ent of ents) {
-      const polygon = /** @type {Polygon2d} */ (
-        entMger.getComp_t(ent, Polygon2d)
-      );
+      const polygon = /** @type {Polygon} */ (entMger.getComp_t(ent, Polygon));
 
-      const transform = entMger.getComp_t(ent, Transform2d);
+      const transform = entMger.getComp_t(ent, Transform);
       if (!transform) continue;
 
       const npoly = polygon.calcTransformed(transform);
 
       ctx2d.save();
 
-      const material = entMger.getComp_t(ent, Polygon2dMaterial);
+      const material = entMger.getComp_t(ent, PolygonMaterial);
       if (material) material.setStyling(ctx2d);
 
       ctx2d.beginPath();

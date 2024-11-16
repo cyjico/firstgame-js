@@ -1,5 +1,5 @@
 import { DestroyOnOutOfBoundsComp } from '../comps/destroyOnOutOfBoundsComp.js';
-import Transform2d from '../ecs/comps/transform2d.js';
+import Transform from '../ecs/comps/transform.js';
 import Sys from '../ecs/core/sys.js';
 
 export default class DestroyOnOutOfBoundsSys extends Sys {
@@ -17,14 +17,14 @@ export default class DestroyOnOutOfBoundsSys extends Sys {
   update = ({ entMger }) => {
     for (const ent of entMger.getEntsWithComp_t(DestroyOnOutOfBoundsComp)) {
       const obComp = entMger.getComp_t(ent, DestroyOnOutOfBoundsComp);
-      const t2d = entMger.getComp_t(ent, Transform2d);
-      if (!obComp || !t2d) continue;
+      const t = entMger.getComp_t(ent, Transform);
+      if (!obComp || !t) continue;
 
       if (
-        t2d.pos.x < -obComp.size ||
-        t2d.pos.x > this.canvas.width + obComp.size ||
-        t2d.pos.y < -obComp.size ||
-        t2d.pos.y > this.canvas.height + obComp.size
+        t.pos.x < -obComp.size ||
+        t.pos.x > this.canvas.width + obComp.size ||
+        t.pos.y < -obComp.size ||
+        t.pos.y > this.canvas.height + obComp.size
       )
         entMger.destroyEnt(ent);
     }

@@ -1,4 +1,4 @@
-/** 
+/**
  * @type {Map<string, CanvasImageSource>}
  */
 const imageCache = new Map();

@@ -14,7 +14,7 @@ export default class HazardSys extends Sys {
   start = ({ evtBus, entMger }) => {
     evtBus.on(
       'collision_enter',
-      /** @type {import('../ecs/systems/polygon2dCollision.js').CollisionEventListener} */
+      /** @type {import('../ecs/systems/polygonCollision.js').CollisionEventListener} */
       ({ ent1, ent2 }) => {
         if (
           this.#applyHazard(entMger, ent1, ent2) ||

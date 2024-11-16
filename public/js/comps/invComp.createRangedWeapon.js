@@ -1,4 +1,4 @@
-import Transform2d from '../ecs/comps/transform2d.js';
+import Transform from '../ecs/comps/transform.js';
 import inputHandler from '../ecs/systems/inputHandler.js';
 import HazardComp from './hazardComp.js';
 import InvComp from './invComp.js';
@@ -14,7 +14,7 @@ import { DestroyOnImpact } from './destroyOnImpactComp.js';
  * @param {number} opts.projSpd
  * @param {number} opts.projCount
  * @param {import('../ecs/comps/sprite.js').default} opts.projSprite
- * @param {import('../ecs/comps/polygon2dCollider.js').default} opts.projCollider
+ * @param {import('../ecs/comps/polygonCollider.js').default} opts.projCollider
  */
 export default function createRangedWeapon({
   name,
@@ -36,13 +36,13 @@ export default function createRangedWeapon({
       return true;
     },
     use: (t, entMger, ent) => {
-      const t2d = entMger.getComp_t(ent, Transform2d);
+      const t2d = entMger.getComp_t(ent, Transform);
       if (!t2d) return;
 
       const dir = inputHandler.mouse.pos.cpy().sub(t2d.pos).normed();
       for (let i = 0; i < _projCount; i++) {
         createProjectile(entMger, dir, _projSpd, [
-          new Transform2d([t2d.pos.x, t2d.pos.y], Math.atan2(dir.y, dir.x)),
+          new Transform([t2d.pos.x, t2d.pos.y], Math.atan2(dir.y, dir.x)),
           _projSprite,
           _projCollider,
           new HazardComp(_projDmg),
@@ -57,23 +57,23 @@ export default function createRangedWeapon({
  * @param {import("../ecs/util/vector2d.js").default} dir
  * @param {number} spd
  * @param {[
- *   Transform2d,
+ *   Transform,
  *   import('../ecs/comps/sprite.js').default,
- *   import('../ecs/comps/polygon2dCollider.js').default,
+ *   import('../ecs/comps/polygonCollider.js').default,
  *   HazardComp
  * ]} comps
  */
-function createProjectile(entMger, dir, spd, [t2d, sprite, poly2dCol, hazard]) {
+function createProjectile(entMger, dir, spd, [t, sprite, polyCol, hazard]) {
   entMger.addComps(
     entMger.createEnt(),
-    t2d,
+    t,
     sprite,
-    poly2dCol,
+    polyCol,
     hazard,
     new MovementComp({
       targetDir: dir,
       spd: spd,
-      targetRot: t2d.rot,
+      targetRot: t.rot,
     }),
     new DestroyOnOutOfBoundsComp(Math.max(sprite.width, sprite.height) * 1.1),
     new DestroyOnImpact(),

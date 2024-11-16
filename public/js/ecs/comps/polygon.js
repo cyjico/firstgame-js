@@ -1,10 +1,10 @@
 import Vector2d from '../util/vector2d.js';
-import { isClockwise } from './polygon2d.util.js';
+import { isClockwise } from './polygon.util.js';
 
 /**
- * Represents a convex clockwise polygon.
+ * Represents a 2-dimensional convex clockwise polygon.
  */
-export default class Polygon2d {
+export default class Polygon {
   /**
    * Vertices in local space.
    *
@@ -25,7 +25,7 @@ export default class Polygon2d {
    * Object-oriented bounds in local space.
    *
    * @protected
-   * @type {Bounds2d}
+   * @type {Bounds}
    */
   _oobb = {
     max: Vector2d.zero,
@@ -36,7 +36,7 @@ export default class Polygon2d {
    * @param {Vertex[]} verts
    * @param {Object} [opts]
    * @param {Edge[]} [opts.edges] Edges of the vertices.
-   * @param {Bounds2d} [opts.oobb] Object-oriented bounds of the vertices.
+   * @param {Bounds} [opts.oobb] Object-oriented bounds of the vertices.
    * @throws `verts` must be greater or equal to 3.
    */
   constructor(verts, { edges = undefined, oobb = undefined } = {}) {
@@ -101,8 +101,8 @@ export default class Polygon2d {
   }
 
   /**
-   * @param {import('./transform2d.js').default} t
-   * @returns {import('./polygon2d.js').Bounds2d} Transformed object-aligned bounding box.
+   * @param {import('./transform.js').default} t
+   * @returns {import('./polygon.js').Bounds} Transformed object-aligned bounding box.
    */
   calcWorldOobb(t) {
     const mat = t.getLocalToWorldMatrix();
@@ -114,8 +114,8 @@ export default class Polygon2d {
   }
 
   /**
-   * @param {import('./transform2d.js').default} t
-   * @returns {import('./polygon2d.js').Bounds2d} Axis-aligned bounding box.
+   * @param {import('./transform.js').default} t
+   * @returns {import('./polygon.js').Bounds} Axis-aligned bounding box.
    */
   calcAabb(t) {
     const mat = t.getLocalToWorldMatrix();
@@ -141,8 +141,8 @@ export default class Polygon2d {
   }
 
   /**
-   * @param {import('./transform2d.js').default} t
-   * @returns {TransformedPolygon2d}
+   * @param {import('./transform.js').default} t
+   * @returns {TransformedPolygon}
    */
   calcTransformed(t) {
     const m = t.getLocalToWorldMatrix();
@@ -169,7 +169,7 @@ export default class Polygon2d {
     nverts[nverts.length - 1].vnext = nverts[0];
     nverts[0].vprev = nverts[nverts.length - 1];
 
-    const npoly = new Polygon2d(nverts);
+    const npoly = new Polygon(nverts);
 
     return {
       verts: npoly.verts,
@@ -209,7 +209,7 @@ export default class Polygon2d {
     nverts[nverts.length - 1].vnext = nverts[0];
     nverts[0].vprev = nverts[nverts.length - 1];
 
-    return new Polygon2d(nverts);
+    return new Polygon(nverts);
   }
 
   /**
@@ -222,7 +222,7 @@ export default class Polygon2d {
     const halfWidth = width * 0.5;
     const halfHeight = height * 0.5;
 
-    return Polygon2d.fromArray([
+    return Polygon.fromArray([
       [-halfWidth, -halfHeight],
       [halfWidth, -halfHeight],
       [halfWidth, halfHeight],
@@ -232,7 +232,7 @@ export default class Polygon2d {
 }
 
 /**
- * @typedef {Object} Bounds2d Bounding box, bounds for short.
+ * @typedef {Object} Bounds Bounding box, bounds for short.
  * @prop {Vector2d} max For axis-aligned bounding boxes, it is usually the bottom-right point.
  * @prop {Vector2d} min For axis-aligned bounding boxes, it is usually the top-left point.
  */
@@ -252,7 +252,7 @@ export default class Polygon2d {
  * @typedef {{
  *   verts: Vertex[],
  *   edges: Edge[],
- *   aabb: Bounds2d,
- *   calcOobb: () => Bounds2d
- * }} TransformedPolygon2d
+ *   aabb: Bounds,
+ *   calcOobb: () => Bounds
+ * }} TransformedPolygon
  */

@@ -4,8 +4,12 @@
     "target": "ES2022",
     "checkJs": true,
     "strict": true,
-    "baseUrl": "."
+    "baseUrl": "./",
+    "paths": {
+      "/*": ["public/*"]
+    }
   },
+
   "include": ["public/**/*"],
   "exclude": ["node_modules", "**/node_modules/*"]
 }

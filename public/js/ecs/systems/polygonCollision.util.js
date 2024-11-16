@@ -1,8 +1,8 @@
 import Vector2d from '../util/vector2d.js';
 
 /**
- * @param {import('../comps/polygon2d.js').Bounds2d} boundsA
- * @param {import('../comps/polygon2d.js').Bounds2d} boundsB
+ * @param {import('../comps/polygon.js').Bounds} boundsA
+ * @param {import('../comps/polygon.js').Bounds} boundsB
  */
 export function testBoundsBounds(boundsA, boundsB) {
   return (
@@ -64,8 +64,8 @@ export function testLineLine(startA, endA, startB, endB) {
  * Calculate the minimum translation vector by finding the separating axis with the smallest
  * overlap between the two polygons.
  *
- * @param {import('../comps/polygon2d.js').TransformedPolygon2d} poly1
- * @param {import('../comps/polygon2d.js').TransformedPolygon2d} poly2
+ * @param {import('../comps/polygon.js').TransformedPolygon} poly1
+ * @param {import('../comps/polygon.js').TransformedPolygon} poly2
  * @returns {Vector2d | null}
  */
 export function calcMinTranslationVec(poly1, poly2) {
@@ -106,7 +106,7 @@ export function calcMinTranslationVec(poly1, poly2) {
 /**
  * Projects the vertices of a polygon onto a given axis.
  *
- * @param {Readonly<Readonly<import('../comps/polygon2d.js').Vertex>[]>} verts
+ * @param {Readonly<Readonly<import('../comps/polygon.js').Vertex>[]>} verts
  * @param {Vector2d} axis
  */
 export function projectVerts(verts, axis) {
